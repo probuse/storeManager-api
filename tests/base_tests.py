@@ -15,13 +15,13 @@ class BaseTestCase(TestCase):
         "Drop all data structures used for storage"
         products[:] = []
 
-    def add_product(self):
+    def add_product(self, product_name, product_price):
         "allows user to post a product"
         return self.client.post(
             '/api/v1/products',
             data = json.dumps(dict(
-                product_name="egg",
-                product_price=500,
+                product_name=product_name,
+                product_price=product_price,
             )
         ),
             content_type='application/json'

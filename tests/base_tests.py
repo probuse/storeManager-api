@@ -31,3 +31,8 @@ class BaseTestCase(TestCase):
     def get_products(self):
         "return all available products"
         return self.client.get('/api/v1/products')
+
+    def get_a_product(self, product_id):
+        "returns a single product"
+        return self.client.get('/api/v1/products/{}'.format(product_id))
+

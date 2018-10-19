@@ -5,4 +5,4 @@ from flask import Flask
 
 app = Flask(__name__)
 
-from app.routes import Product
+from app.routes import ProductEndPoint, SingleProductEndPoint

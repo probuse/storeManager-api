@@ -49,5 +49,7 @@ class SaleTestCase(BaseTestCase):
     def test_get_a_sale_returns_200_status_code(self):
         "Test /sales/<sale_id> endpoint responds with a 200 status code"
         with self.client:
+            self.add_product("egg", 500)
+            self.add_sale(1, 2)
             response = self.get_a_sale(1)
             self.assertEqual(response.status_code, 200)

@@ -89,7 +89,7 @@ class ProductEndPoint(Resource):
 
 class SingleSaleEndPoint(Resource):
     "Returns a single sale"
-    def post(self, sale_id):
+    def get(self, sale_id):
         'Returns a single sale with id of sale_id'
         for sale in sales:
             if sale.sale_id == int(sale_id):

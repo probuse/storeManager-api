@@ -1,5 +1,5 @@
 """
-This will contain all api endpoints
+    Contain all api endpoints
 """
 import json
 from flask import request
@@ -13,10 +13,23 @@ parser = reqparse.RequestParser()
 products = []
 
 class ProductEndPoint(Resource):
-    "This resource will handle all requests to products endpoint"
+    "This resource handles all requests to /products endpoint"
     def get(self):
         'Handles all get requests to /products endpoint'
-        return {'message': 'welcome to store Manager, Be patient as we set up {-: '}
+        response_data = []
+        if products:
+            for product in products:
+                data = dict(
+                    product_id = product.product_id,
+                    product_name = product.product_name,
+                    product_price = product.product_price,
+                    product_count = product.product_count
+                )
+                response_data.append(data)
+            json_data = json.dumps(response_data, sort_keys=True)
+            return json_data
+                
+        return {'message': 'No Products added yet'}
 
     def post(self):
         'Handles all post requests to /products endpoint'
@@ -56,4 +69,22 @@ class ProductEndPoint(Resource):
                 product_name, product_id),
             }, 201
 
+class SingleProductEndPoint(Resource):
+    "Returns a single product"
+    def get(self, product_id):
+        'Returns a single product with id of product_id'
+        for product in products:
+            if product.product_id == int(product_id):
+                response_data = dict(
+                        product_id = product.product_id,
+                        product_name = product.product_name,
+                        product_price = product.product_price,
+                        product_count = product.product_count
+                    )
+                return json.dumps(response_data)
+        return {
+            'message': 'Product with id {} does not exist'.format(product_id)
+        }
+
 api.add_resource(ProductEndPoint, '/api/v1/products')
+api.add_resource(SingleProductEndPoint, '/api/v1/products/<product_id>')

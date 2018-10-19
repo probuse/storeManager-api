@@ -1,4 +1,5 @@
-# storeManager-api
+# storeManager-api  
+[![Build Status](https://travis-ci.com/probuse/storeManager-api.svg?branch=master)](https://travis-ci.com/probuse/storeManager-api)  
 StoreManager-api is an API for the storeManager web application.  
 StoreManager is a web application that helps store owners manage sales and product inventory records
 

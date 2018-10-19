@@ -6,11 +6,12 @@ from flask import request
 from flask_restful import Resource, Api, reqparse
 from app import app
 from app.models.product import Product
+from app.models.sale import Sale
 
 api = Api(app)
-parser = reqparse.RequestParser()
 
 products = []
+sales = []
 
 class ProductEndPoint(Resource):
     "Handles all requests to /products endpoint"
@@ -33,6 +34,7 @@ class ProductEndPoint(Resource):
 
     def post(self):
         'Handles all post requests to /products endpoint'
+        parser = reqparse.RequestParser()
         parser.add_argument(
             'product_name', 
             type=str, 
@@ -86,5 +88,50 @@ class SingleProductEndPoint(Resource):
             'message': 'Product with id {} does not exist'.format(product_id)
         }
 
+class SaleEndPoint(Resource):
+    "Handles all requests to /sales endpoint"
+    
+    def post(self):
+        'Handles all post requests to /sales endpoint'
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+            'product_id', 
+            type=int, 
+            required=True,
+            help="Product id can not be empty" 
+        )
+
+        parser.add_argument(
+            'products_sold', 
+            type=int, 
+            required=True,
+            help="Products sold can not be empty" 
+        )
+
+        args = parser.parse_args()
+        product_id = args['product_id']
+        products_sold = args['products_sold']
+
+        if products:
+            for product in products:
+                if product.product_id == int(product_id):
+                    sale = Sale(
+                        product_id = product.product_id,
+                        products_sold = products_sold 
+                    )
+                    sale.sale_id = len(sales) + 1
+                    sales.append(sale)
+                    return {
+                        'message': '{} {}(s) successfully sold'.format(
+                            products_sold, 
+                            product.product_name
+                            )
+                    }
+        return {
+            'message': 'Product with Product id {} does not exist'.format(product_id)
+            }
+
+# Endpoints to url mapping
 api.add_resource(ProductEndPoint, '/api/v1/products')
 api.add_resource(SingleProductEndPoint, '/api/v1/products/<product_id>')
+api.add_resource(SaleEndPoint, '/api/v1/sales')

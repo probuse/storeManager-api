@@ -4,7 +4,7 @@
 import json
 from unittest import TestCase
 from app import app
-from app.routes import products
+from app.routes import products, sales
 
 class BaseTestCase(TestCase):
     def setUp(self):
@@ -14,6 +14,7 @@ class BaseTestCase(TestCase):
     def tearDown(self):
         "Drop all data structures used for storage"
         products[:] = []
+        sales[:] = []
 
     def add_product(self, product_name, product_price):
         "allows user to post a product"
@@ -35,4 +36,18 @@ class BaseTestCase(TestCase):
     def get_a_product(self, product_id):
         "returns a single product"
         return self.client.get('/api/v1/products/{}'.format(product_id))
+
+    def add_sale(self, product_id, products_sold):
+        "allows user to post a sale"
+        return self.client.post(
+            '/api/v1/sales',
+            data = json.dumps(
+                dict(
+                    product_id=product_id,
+                    products_sold=products_sold
+                )
+            ),
+            content_type='application/json'
+        )
+
 

@@ -13,7 +13,7 @@ parser = reqparse.RequestParser()
 products = []
 
 class ProductEndPoint(Resource):
-    "This resource handles all requests to /products endpoint"
+    "Handles all requests to /products endpoint"
     def get(self):
         'Handles all get requests to /products endpoint'
         response_data = []
@@ -76,10 +76,10 @@ class SingleProductEndPoint(Resource):
         for product in products:
             if product.product_id == int(product_id):
                 response_data = dict(
-                        product_id = product.product_id,
-                        product_name = product.product_name,
-                        product_price = product.product_price,
-                        product_count = product.product_count
+                        product_id=product.product_id,
+                        product_name=product.product_name,
+                        product_price=product.product_price,
+                        product_count=product.product_count
                     )
                 return json.dumps(response_data)
         return {

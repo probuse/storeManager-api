@@ -90,6 +90,10 @@ class SingleProductEndPoint(Resource):
 
 class SaleEndPoint(Resource):
     "Handles all requests to /sales endpoint"
+
+    def get(self):
+        'Handles all get requests /sales'
+        return {'message': 'Success'}
     
     def post(self):
         'Handles all post requests to /sales endpoint'

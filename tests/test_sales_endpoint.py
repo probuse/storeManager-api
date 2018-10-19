@@ -26,11 +26,11 @@ class ProductTestCase(BaseTestCase):
             sale_response = self.add_sale(3, 2)
             self.assertIn(b'Product with Product id 3 does not exist', sale_response.data)
 
-    # def test_get_products_returns_200_status_code(self):
-    #     "Test product endpoint responds with a 200 status code"
-    #     with self.client:
-    #         response = self.get_products()
-    #         self.assertEqual(response.status_code, 200)
+    def test_get_sales_returns_200_status_code(self):
+        "Test a GET request to /sales returns a 200 status code"
+        with self.client:
+            response = self.get_sales()
+            self.assertEqual(response.status_code, 200)
 
     # def test_get_a_product_returns_200_status_code(self):
     #     "Test /product/<product_id> endpoint responds with a 200 status code"

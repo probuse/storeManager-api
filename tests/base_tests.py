@@ -50,4 +50,8 @@ class BaseTestCase(TestCase):
             content_type='application/json'
         )
 
+    def get_sales(self):
+        "return all sales made"
+        return self.client.get('/api/v1/sales')
+
 

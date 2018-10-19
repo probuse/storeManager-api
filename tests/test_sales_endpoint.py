@@ -46,5 +46,8 @@ class SaleTestCase(BaseTestCase):
             response = self.get_sales()
             self.assertIn(b'2', response.data)
 
-
-   
+    def test_get_a_sale_returns_200_status_code(self):
+        "Test /sales/<sale_id> endpoint responds with a 200 status code"
+        with self.client:
+            response = self.get_a_sale(1)
+            self.assertEqual(response.status_code, 200)

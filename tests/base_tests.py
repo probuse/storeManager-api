@@ -54,4 +54,8 @@ class BaseTestCase(TestCase):
         "return all sales made"
         return self.client.get('/api/v1/sales')
 
+    def get_a_sale(self, sale_id):
+        "returns a single sale"
+        return self.client.get('/api/v1/sales/{}'.format(sale_id))
+
 

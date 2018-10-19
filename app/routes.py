@@ -13,6 +13,22 @@ api = Api(app)
 products = []
 sales = []
 
+class SingleProductEndPoint(Resource):
+    "Returns a single product"
+    def get(self, product_id):
+        'Returns a single product with id of product_id'
+        for product in products:
+            if product.product_id == int(product_id):
+                response_data = dict(
+                        product_id=product.product_id,
+                        product_name=product.product_name,
+                        product_price=product.product_price,
+                        product_count=product.product_count
+                    )
+                return jsonify(response_data)
+        return {
+            'message': 'Product with id {} does not exist'.format(product_id)
+        }
 class ProductEndPoint(Resource):
     "Handles all requests to /products endpoint"
     def get(self):
@@ -71,22 +87,23 @@ class ProductEndPoint(Resource):
                 product_name, product_id),
             }, 201
 
-class SingleProductEndPoint(Resource):
-    "Returns a single product"
-    def get(self, product_id):
-        'Returns a single product with id of product_id'
-        for product in products:
-            if product.product_id == int(product_id):
+class SingleSaleEndPoint(Resource):
+    "Returns a single sale"
+    def post(self, sale_id):
+        'Returns a single sale with id of sale_id'
+        for sale in sales:
+            if sale.sale_id == int(sale_id):
                 response_data = dict(
-                        product_id=product.product_id,
-                        product_name=product.product_name,
-                        product_price=product.product_price,
-                        product_count=product.product_count
+                        sale_id=sale.sale_id,
+                        product_id=sale.product_id,
+                        products_sold=sale.products_sold,
+                        sale_date=sale.sale_date
                     )
                 return jsonify(response_data)
         return {
-            'message': 'Product with id {} does not exist'.format(product_id)
+            'message': 'Sale with id {} does not exist'.format(sale_id)
         }
+
 
 class SaleEndPoint(Resource):
     "Handles all requests to /sales endpoint"
@@ -150,3 +167,4 @@ class SaleEndPoint(Resource):
 api.add_resource(ProductEndPoint, '/api/v1/products')
 api.add_resource(SingleProductEndPoint, '/api/v1/products/<product_id>')
 api.add_resource(SaleEndPoint, '/api/v1/sales')
+api.add_resource(SingleSaleEndPoint, '/api/v1/sales/<sale_id>')

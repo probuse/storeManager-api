@@ -1,6 +1,7 @@
 # storeManager-api  
-[![Build Status](https://travis-ci.com/probuse/storeManager-api.svg?branch=master)](https://travis-ci.com/probuse/storeManager-api)
-[![Coverage Status](https://coveralls.io/repos/github/probuse/storeManager-api/badge.svg?branch=master)](https://coveralls.io/github/probuse/storeManager-api?branch=master)
+[![Build Status](https://travis-ci.com/probuse/storeManager-api.svg?branch=chore-161305609-add-CI-coveralls)](https://travis-ci.com/probuse/storeManager-api)
+[![Coverage Status](https://coveralls.io/repos/github/probuse/storeManager-api/badge.svg?branch=master)](https://coveralls.io/github/probuse/storeManager-api?branch=chore-161305609-add-CI-coveralls)  
+
 StoreManager-api is an API for the storeManager web application.  
 StoreManager is a web application that helps store owners manage sales and product inventory records
 

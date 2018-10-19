@@ -2,7 +2,7 @@
     Contain all api endpoints
 """
 import json
-from flask import request
+from flask import request, jsonify
 from flask_restful import Resource, Api, reqparse
 from app import app
 from app.models.product import Product
@@ -27,7 +27,7 @@ class ProductEndPoint(Resource):
                     product_count = product.product_count
                 )
                 response_data.append(data)
-            json_data = json.dumps(response_data, sort_keys=True)
+            json_data = jsonify(response_data)
             return json_data
                 
         return {'message': 'No Products added yet'}
@@ -83,7 +83,7 @@ class SingleProductEndPoint(Resource):
                         product_price=product.product_price,
                         product_count=product.product_count
                     )
-                return json.dumps(response_data)
+                return jsonify(response_data)
         return {
             'message': 'Product with id {} does not exist'.format(product_id)
         }
@@ -102,9 +102,8 @@ class SaleEndPoint(Resource):
                     products_sold = sale.products_sold,
                     sale_date = sale.sale_date
                 )
-                print(data)
                 response_data.append(data)
-            return json.dumps(response_data)
+            return jsonify(response_data)
         return {'message': 'No Sales made yet'}
     
     def post(self):

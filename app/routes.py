@@ -93,7 +93,19 @@ class SaleEndPoint(Resource):
 
     def get(self):
         'Handles all get requests /sales'
-        return {'message': 'Success'}
+        response_data = []
+        if sales:
+            for sale in sales:
+                data = dict(
+                    sale_id = sale.sale_id,
+                    product_id = sale.product_id,
+                    products_sold = sale.products_sold,
+                    sale_date = sale.sale_date
+                )
+                print(data)
+                response_data.append(data)
+            return json.dumps(response_data)
+        return {'message': 'No Sales made yet'}
     
     def post(self):
         'Handles all post requests to /sales endpoint'

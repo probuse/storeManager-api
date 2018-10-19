@@ -3,7 +3,7 @@
 """
 from tests.base_tests import BaseTestCase
 
-class ProductTestCase(BaseTestCase):
+class SaleTestCase(BaseTestCase):
     "TestCase to test SaleEndPoint"
 
     def test_add_sale_returns_200_status_code(self):
@@ -32,8 +32,19 @@ class ProductTestCase(BaseTestCase):
             response = self.get_sales()
             self.assertEqual(response.status_code, 200)
 
-    # def test_get_a_product_returns_200_status_code(self):
-    #     "Test /product/<product_id> endpoint responds with a 200 status code"
-    #     with self.client:
-    #         response = self.get_a_product(1)
-    #         self.assertEqual(response.status_code, 200)
+    def test_get_sales_when_no_sales_have_been_made(self):
+        "Test request to /sales returns a message to user with no sales"
+        with self.client:
+            response = self.get_sales()
+            self.assertIn(b'No Sales made yet', response.data)
+
+    def test_get_sales_when_sales_have_been_made(self):
+        "Test request to /sales returns a message to user with sales"
+        with self.client:
+            self.add_product("egg", 500)
+            self.add_sale(1, 2)
+            response = self.get_sales()
+            self.assertIn(b'2', response.data)
+
+
+   

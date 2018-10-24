@@ -5,16 +5,20 @@ from unittest import TestCase
 from app.models.product import Product
 
 class ProductTestCase(TestCase):
+
+    def setUp(self):
+        "Initialize variables"
+        self.product = Product("Sugar", 2000)
+
     def test_one_product_object_created_successfully(self):
         "Tests if one product can be added"
-        product = Product("Sugar", 2000)
         self.assertListEqual(
             [None, "Sugar", 2000, 1], 
             [
-                product.product_id, 
-                product.product_name, 
-                product.product_price, 
-                product.product_count
+                self.product.product_id, 
+                self.product.product_name, 
+                self.product.product_price, 
+                self.product.product_quantity
             ]
         )
 
@@ -27,6 +31,12 @@ class ProductTestCase(TestCase):
                 product.product_id, 
                 product.product_name, 
                 product.product_price, 
-                product.product_count
+                product.product_quantity
             ]
         )
+    
+    def test_product_name_can_not_be_empty(self):
+        "Test product name is a valid name"
+        product = Product("", 3000)
+        self.assertRaises(NameError, product.product_name, "")
+

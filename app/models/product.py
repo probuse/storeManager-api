@@ -9,12 +9,12 @@ class Product:
     products = []
 
     # def __init__(self, product_name, product_price, product_quantity = 1):
-    def __init__(self, product_quantity = 1, **kwargs):
+    def __init__(self, **kwargs):
         "Product takes in product_name and product_price"
         self._product_id = None
         self._product_name = validate_product_name(kwargs.get('product_name', None))
         self._product_price = validate_product_price(kwargs.get('product_price', None))
-        self._product_quantity = validate_product_quantity(product_quantity)
+        self._product_quantity = validate_product_quantity(kwargs.get('product_quantity', 1))
 
 
     @property

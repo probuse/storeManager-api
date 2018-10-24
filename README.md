@@ -1,8 +1,8 @@
 # storeManager-api  
 [![Build Status](https://travis-ci.com/probuse/storeManager-api.svg?branch=develop)](https://travis-ci.com/probuse/storeManager-api)
 [![Coverage Status](https://coveralls.io/repos/github/probuse/storeManager-api/badge.svg?branch=develop)](https://coveralls.io/github/probuse/storeManager-api?branch=develop)  
-[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/codeclimate/codeclimate/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/test_coverage)](https://codeclimate.com/github/codeclimate/codeclimate/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/612965a0756ff1a779fd/maintainability)](https://codeclimate.com/github/probuse/storeManager-api/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/612965a0756ff1a779fd/test_coverage)](https://codeclimate.com/github/probuse/storeManager-api/test_coverage)
 
 StoreManager-api is an API for the storeManager web application.  
 StoreManager is a web application that helps store owners manage sales and product inventory records

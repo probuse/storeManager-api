@@ -33,3 +33,39 @@ def validate_product_quantity(product_quantity):
     elif product_quantity < 0:
         return "Product Quantity can not be a negative"
     return product_quantity
+
+def validate_product_id(product_id):
+    "validates product id"
+    if str(product_id).strip() == "" or len(str(product_id).strip()) == 0:
+        return "Product id can not be empty"
+    elif isinstance(product_id, str):
+        return "Product id can not be a string"
+    elif product_id == 0:
+        return "Product id can not be 0"
+    elif product_id < 0:
+        return "Product id must be greater than zero"
+    return product_id
+
+def validate_products_sold(products_sold):
+    "validates products sold"
+    if products_sold == 0:
+        return "Products sold can not be 0"
+    elif str(products_sold).strip() == "":
+        return "Products sold can not be empty"
+    elif isinstance(products_sold, str):
+        return "Products sold can not be a string"
+    elif products_sold < 0:
+        return "Products sold must be greater than 0"
+    return products_sold
+
+def validate_seller_id(seller_id):
+    "validates seller id"
+    if seller_id == 0:
+        return "Seller id can not be 0"
+    elif str(seller_id).strip() == "" or len(str(seller_id).strip()) == 0:
+        return "Seller id can not be empty"
+    elif isinstance(seller_id, str):
+        return "Seller id can not be a string"
+    elif seller_id < 0:
+        return "Seller id must be greater than 0"
+    return seller_id

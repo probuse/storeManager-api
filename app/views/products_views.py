@@ -5,42 +5,21 @@ from flask import request, jsonify
 from flask_restful import Resource, Api, reqparse
 from app.models.product import Product
 
-products = []
+products = Product.products
+product_obj = Product()
 
 class SingleProductEndPoint(Resource):
     "Returns a single product"
     def get(self, product_id):
         'Returns a single product with id of product_id'
-        for product in products:
-            if product.product_id == int(product_id):
-                response_data = dict(
-                        product_id=product.product_id,
-                        product_name=product.product_name,
-                        product_price=product.product_price,
-                        product_count=product.product_count
-                    )
-                return jsonify(response_data)
-        return {
-            'message': 'Product with id {} does not exist'.format(product_id)
-        }
+        response = product_obj.get_product(product_id)
+        return response
 class ProductEndPoint(Resource):
     "Handles all requests to /products endpoint"
     def get(self):
         'Handles all get requests to /products endpoint'
-        response_data = []
-        if products:
-            for product in products:
-                data = dict(
-                    product_id = product.product_id,
-                    product_name = product.product_name,
-                    product_price = product.product_price,
-                    product_count = product.product_count
-                )
-                response_data.append(data)
-            json_data = jsonify(response_data)
-            return json_data
-                
-        return {'message': 'No Products added yet'}
+        response = product_obj.get_all_products()
+        return response
 
     def post(self):
         'Handles all post requests to /products endpoint'
@@ -58,25 +37,6 @@ class ProductEndPoint(Resource):
             help="Product Price can not be empty" 
         )
         args = parser.parse_args()
-        product_name = args['product_name']
-        product_price = args['product_price']
+        response = product_obj.add_product(**args)
 
-        if products:
-            for product in products:
-                if product.product_name == product_name:
-                    return {
-                        'message' : 'Product {} already exists'.format(product_name)
-                    }
-
-        product_id = len(products) + 1
-        new_product = Product(
-            product_name = product_name,
-            product_price = product_price
-        )
-        new_product.product_id = product_id
-        products.append(new_product)
-
-        return {
-            'message': 'Product {} with id {} successfully added'.format(
-                product_name, product_id),
-            }, 201
+        return response

@@ -24,8 +24,21 @@ class ProductTestCase(BaseTestCase):
             response = self.get_products()
             self.assertEqual(response.status_code, 200)
 
+    def test_get_products_returns_no_products_added_yet_if_no_products_are_added(self):
+        "Test product endpoint returns No Products added yet when no products are added"
+        with self.client:
+            response = self.get_products()
+            self.assertIn(b'No Products added yet', response.data)
+
     def test_get_a_product_returns_200_status_code(self):
         "Test /product/<product_id> endpoint responds with a 200 status code"
         with self.client:
             response = self.get_a_product(1)
             self.assertEqual(response.status_code, 200)
+
+    def test_get_products_returns_no_product_if_product_id_doesnot_exist(self):
+        "Test product endpoint returns Product does not exists with invalid id"
+        with self.client:
+            self.add_product("egg", 500)
+            response = self.get_a_product(2)
+            self.assertIn(b'Product with id 2 does not exist', response.data)

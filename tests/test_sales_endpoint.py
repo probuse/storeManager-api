@@ -2,6 +2,7 @@
     This module will contain tests for the sales endpoint
 """
 from tests.base_tests import BaseTestCase
+from app.models.sale import Sale
 
 class SaleTestCase(BaseTestCase):
     "TestCase to test SaleEndPoint"
@@ -53,3 +54,35 @@ class SaleTestCase(BaseTestCase):
             self.add_sale(1, 2, 1)
             response = self.get_a_sale(1)
             self.assertEqual(response.status_code, 200)
+
+    def test_get_a_sale_returns_no_products_yet(self):
+        "Tests if get_a_sale returns with no product added"
+        with self.client:
+            response = self.get_a_sale(1)
+            self.assertIn(b'{"message": "No products added yet"}', response.data)
+
+    def test_get_a_sale_returns_no_sales_yet(self):
+        "Tests if get_a_sale returns with no sales added"
+        with self.client:
+            self.add_product("egg", 500)
+            response = self.get_a_sale(1)
+            self.assertIn(b'{"message": "No Sales made yet"}', response.data)
+
+    def test_get_a_sale_returns_sale(self):
+        "Tests if get_a_sale returns when a sale is added"
+        with self.client:
+            self.add_product("egg", 500)
+            response = self.add_sale(1, 2, 1)
+            self.assertIn(b'{"message": "2 egg(s) successfully sold"}', response.data)
+
+    def test_get_a_sale_returns_sale_does_not_exist(self):
+        "Tests if get_a_sale returns when a sale is added"
+        with self.client:
+            self.add_product("egg", 500)
+            response = self.add_sale(3, 2, 1)
+            self.assertIn(
+                b'{"message": "Product with Product id 3 does not exist"}', 
+                response.data
+            )
+
+    

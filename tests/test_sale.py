@@ -3,20 +3,26 @@
 """
 from unittest import TestCase
 from app.models.sale import Sale
+from app.models.product import Product
 
 class SaleTestCase(TestCase):
     "TestCase for the Sale class"
 
-    def test_sale_object_created_successfully(self):
-        "Test sale project creation was successful"
-        sale = Sale(
+    def setUp(self):
+        "initialize variables"
+        self.sale_obj = Sale(
             product_id = 1, 
             products_sold = 2, 
             seller_id = 3
         )
+        self.product_obj = Product()
+        self.product_data = dict(product_name="pk", product_price=300)
+
+    def test_sale_object_created_successfully(self):
+        "Test sale project creation was successful"
         self.assertListEqual(
             [1, 2, 3],
-            [sale.product_id, sale.products_sold, sale.seller_id]
+            [self.sale_obj.product_id, self.sale_obj.products_sold, self.sale_obj.seller_id]
         )
 
     def test_product_id_cannot_be_zero(self):
@@ -114,3 +120,43 @@ class SaleTestCase(TestCase):
         ) 
         self.assertEqual(
             "Seller id must be greater than 0", sale.seller_id)
+
+    def test_get_product_id(self):
+        "Tests if product_id is returned"
+        self.assertEqual(self.sale_obj.product_id, 1)
+    
+    def test_get_products_sold(self):
+        "Tests if product_sold is returned"
+        self.assertEqual(self.sale_obj.products_sold, 2)
+
+    def test_get_seller_id(self):
+        "Tests if seller_id is returned"
+        self.assertEqual(self.sale_obj.seller_id, 3)
+
+    def test_set_product_id(self):
+        "Tests if sale sets product id"
+        self.sale_obj.product_id = 1
+        self.assertEqual(self.sale_obj.product_id, 1)
+
+    def test_set_products_sold(self):
+        "Tests if sale sets products sold"
+        self.sale_obj.products_sold = 23
+        self.assertEqual(self.sale_obj.products_sold, 23)
+
+    def test_set_seller_id(self):
+        "Tests if sale sets seller_id"
+        self.sale_obj.products_sold = 23
+        self.assertEqual(self.sale_obj.products_sold, 23)
+
+    def test_get_sale_returns_no_products(self):
+        "Tests return from get_sale with no product added"
+        response = self.sale_obj.get_sale(1)
+        self.assertIn("No products added yet", response['message'])
+
+    def test_get_sale_returns_no_sales(self):
+        "Tests return from get_sale with no product added"
+        self.product_obj.add_product(**self.product_data)
+        response = self.sale_obj.get_sale(1)
+        self.assertIn('No Sales made yet', response['message'])
+
+

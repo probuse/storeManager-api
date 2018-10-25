@@ -2,9 +2,6 @@
     Contains implementation of the Sale class
 """
 from datetime import datetime
-from app.utils import (
-    validate_product_id, validate_products_sold, validate_seller_id
-    )
 from app.models.product import Product
 class Sale:
 
@@ -13,13 +10,9 @@ class Sale:
 
     def __init__(self, **kwargs):
         self._sale_id = None
-        self._product_id = validate_product_id(kwargs.get("product_id", None))
-        self._products_sold = validate_products_sold(
-            kwargs.get("products_sold", None)
-        )
-        self._seller_id = validate_seller_id(
-            kwargs.get("seller_id", None)
-        )
+        self._product_id = kwargs.get("product_id", None)
+        self._products_sold = kwargs.get("products_sold", None)
+        self._seller_id = kwargs.get("seller_id", None)
         self.sale_date = str(datetime.now().date())
 
     @property
@@ -96,24 +89,69 @@ class Sale:
 
     def add_sale(self, **data):
         "Adds a sale"
+        valid, errors = self.validate_sale(**data)
         product_id = data['product_id']
         products_sold = data['products_sold']
+        seller_id = data['seller_id']
 
-        if Sale.products:
-            for product in Sale.products:
-                if product.product_id == int(product_id):
-                    sale = Sale(
-                        product_id = product.product_id,
-                        products_sold = products_sold 
-                    )
-                    sale.sale_id = len(Sale.sales) + 1
-                    Sale.sales.append(sale)
-                    return {
-                        'message': '{} {}(s) successfully sold'.format(
-                            products_sold, 
-                            product.product_name
-                            )
-                    }
-        return {
-            'message': 'Product with Product id {} does not exist'.format(product_id)
-            }
+        if valid:
+            if Sale.products:
+                for product in Sale.products:
+                    if product.product_id == int(product_id):
+                        sale = Sale(
+                            product_id = product.product_id,
+                            products_sold = products_sold 
+                        )
+                        sale.sale_id = len(Sale.sales) + 1
+                        Sale.sales.append(sale)
+                        return {
+                            'message': '{} {}(s) successfully sold'.format(
+                                products_sold, 
+                                product.product_name
+                                )
+                        }
+            return {
+                'message': 'Product with Product id {} does not exist'.format(product_id)
+                }
+        return errors
+
+    def validate_sale(self, **data):
+        "validates product"
+        is_product_id_valid = False
+        is_products_sold_valid = False
+        is_seller_id_valid = False
+
+        product_id = data['product_id']
+        products_sold = data['products_sold']
+        seller_id = data['seller_id']
+
+        errors = {}
+        try:
+            product_id = int(product_id)
+            if product_id < 1:
+                errors['product_id'] = "Product id can not be less than one"
+            else:
+                is_product_id_valid = True
+        except ValueError:
+            errors['product_id'] = "Product id is not a number"
+
+        try:
+            products_sold = int(products_sold)
+            if products_sold < 1:
+                errors['products_sold'] = "Products sold can not be less than one"
+            else:
+                is_products_sold_valid = True
+        except ValueError:
+            errors['products_sold'] = "Products sold is not a number"
+
+        try:
+            seller_id = int(seller_id)
+            if seller_id < 1:
+                errors['seller_id'] = "Seller id can not be less than one"
+            else: 
+                is_seller_id_valid = True
+        except ValueError:
+            errors['seller_id'] = "Seller id is not a number"
+
+        return is_product_id_valid and is_products_sold_valid \
+            and is_seller_id_valid, errors

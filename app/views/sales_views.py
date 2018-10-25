@@ -41,6 +41,11 @@ class SaleEndPoint(Resource):
             help="Products sold can not be empty" 
         )
 
+        parser.add_argument(
+            'seller_id',
+            type=int,
+        )
+
         args = parser.parse_args()
         return sales_obj.add_sale(**args)
         

@@ -84,3 +84,4 @@ class SaleEndPoint(Resource):
         return {
             'message': 'Product with Product id {} does not exist'.format(product_id)
             }
+            

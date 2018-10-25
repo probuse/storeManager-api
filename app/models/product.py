@@ -8,7 +8,6 @@ class Product:
     "Class for creating all objects in store"
     products = []
 
-    # def __init__(self, product_name, product_price, product_quantity = 1):
     def __init__(self, **kwargs):
         "Product takes in product_name and product_price"
         self._product_id = None
@@ -90,7 +89,7 @@ class Product:
                     product_id = product.product_id,
                     product_name = product.product_name,
                     product_price = product.product_price,
-                    product_count = product.product_count
+                    product_quantity = product.product_quantity
                 )
                 response_data.append(data)
             return {'result': response_data}
@@ -112,3 +111,4 @@ class Product:
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }
+        return {'message': 'No Products added yet'}

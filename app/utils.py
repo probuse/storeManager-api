@@ -64,8 +64,8 @@ def validate_seller_id(seller_id):
         return "Seller id can not be 0"
     elif str(seller_id).strip() == "" or len(str(seller_id).strip()) == 0:
         return "Seller id can not be empty"
+    elif seller_id is not None and seller_id < 0:
+        return "Seller id must be greater than 0"
     elif isinstance(seller_id, str):
         return "Seller id can not be a string"
-    elif seller_id < 0:
-        return "Seller id must be greater than 0"
     return seller_id

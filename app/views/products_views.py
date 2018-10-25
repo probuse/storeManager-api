@@ -14,6 +14,8 @@ class SingleProductEndPoint(Resource):
         'Returns a single product with id of product_id'
         response = product_obj.get_product(product_id)
         return response
+
+
 class ProductEndPoint(Resource):
     "Handles all requests to /products endpoint"
     def get(self):

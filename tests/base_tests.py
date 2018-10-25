@@ -4,7 +4,8 @@
 import json
 from unittest import TestCase
 from app import app
-from app.routes import products, sales
+from app.views.products_views import products
+from app.views.sales_views import sales
 
 class BaseTestCase(TestCase):
     def setUp(self):

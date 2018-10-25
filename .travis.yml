@@ -4,13 +4,18 @@ language: python
 python:
   - "3.6"
 
+env:
+  global:
+    - CODECOV_TOKEN="700cabb1-b67f-4f44-93e5-f5f01ea3761d"
+
 install:
   - "pip install -r requirements.txt"
-  - "pip install coveralls"
+  - "pip install codecov"
 
 script:
-  - pytest
+  - python3 -m pytest -v --cov app/tests --cov-report term-missing
 
 
 after_success:
 - coveralls
+- codecov

@@ -70,7 +70,7 @@ class Product:
             product_id = len(Product.products) + 1
             new_product = Product(
                 product_name = product_name,
-                product_price = product_price
+                product_price = product_price,
             )
             new_product.product_id = product_id
             Product.products.append(new_product)

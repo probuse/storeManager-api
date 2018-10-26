@@ -30,13 +30,13 @@ class ProductEndPoint(Resource):
             'product_name', 
             type=str, 
             required=True,
-            help="Product Name can not be empty" 
+            help="Product Name must be a string" 
         )
         parser.add_argument(
             'product_price', 
             type=int, 
             required=True,
-            help="Product Price can not be empty" 
+            help="Product Price must be an integer" 
         )
         args = parser.parse_args()
         response = product_obj.add_product(**args)

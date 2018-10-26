@@ -44,6 +44,8 @@ class SaleEndPoint(Resource):
         parser.add_argument(
             'seller_id',
             type=int,
+            required=True,
+            help="seller_id must be an integer"
         )
 
         args = parser.parse_args()

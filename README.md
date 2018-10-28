@@ -1,9 +1,11 @@
 # storeManager-api  
 [![Build Status](https://travis-ci.com/probuse/storeManager-api.svg?branch=develop)](https://travis-ci.com/probuse/storeManager-api)
-[![Coverage Status](https://coveralls.io/repos/github/probuse/storeManager-api/badge.svg?branch=develop)](https://coveralls.io/github/probuse/storeManager-api?branch=develop)  
+[![Coverage Status](https://coveralls.io/repos/github/probuse/storeManager-api/badge.svg?branch=develop)](https://coveralls.io/github/probuse/storeManager-api?branch=develop) 
 [![Maintainability](https://api.codeclimate.com/v1/badges/612965a0756ff1a779fd/maintainability)](https://codeclimate.com/github/probuse/storeManager-api/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/612965a0756ff1a779fd/test_coverage)](https://codeclimate.com/github/probuse/storeManager-api/test_coverage)
-[![codecov](https://codecov.io/gh/probuse/storeManager-api/branch/master/graph/badge.svg)](https://codecov.io/gh/probuse/storeManager-api)
+[![codecov](https://codecov.io/gh/probuse/storeManager-api/branch/develop/graph/badge.svg)](https://codecov.io/gh/probuse/storeManager-api)
+
+
+
 
 
 

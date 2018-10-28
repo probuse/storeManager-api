@@ -4,7 +4,6 @@
 class Product:
     "Class for creating all objects in store"
     products = []
-    recent_id = 0
 
     def __init__(self, **kwargs):
         "Product takes in product_name and product_price"

@@ -4,6 +4,7 @@
 class Product:
     "Class for creating all objects in store"
     products = []
+    recent_id = 0
 
     def __init__(self, **kwargs):
         "Product takes in product_name and product_price"
@@ -58,6 +59,7 @@ class Product:
         valid, errors = self.validate_product(**data)
         product_name = data['product_name']
         product_price = data['product_price']
+        product_id = len(Product.products) + 1
 
         if valid:
             if Product.products:
@@ -66,8 +68,8 @@ class Product:
                         return {
                             'message' : 'Product {} already exists'.format(product_name)
                         }
-
-            product_id = len(Product.products) + 1
+                    elif product.product_id == product_id:
+                        product_id += 1
             new_product = Product(
                 product_name = product_name,
                 product_price = product_price,
@@ -117,8 +119,6 @@ class Product:
 
     def modify_product(self, product_id, **data):
         "updates product"
-        valid, errors = self.validate_product(**data)
-        product_id = product_id
         product_name = data.get('product_name')
         product_price = data.get('product_price')
 
@@ -130,6 +130,22 @@ class Product:
                     products[i].product_price = product_price
 
                     return {'result': 'Product successfully updated'}
+            return {
+                'message': 'Product with id {} does not exist'.format(product_id)
+            }
+        return {'message': 'No Products added yet'}
+
+    def delete_product(self, product_id):
+        "deletes a product"
+        product_id = product_id
+
+        products = Product.products
+        if products:
+            for i in range(len(products)):
+                if products[i].product_id == int(product_id):
+                    products.remove(products[i])
+                    Product.recent_id += 1
+                    return {'result': 'Product successfully deleted'}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }

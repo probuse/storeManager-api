@@ -92,7 +92,6 @@ class Sale:
         valid, errors = self.validate_sale(**data)
         product_id = data['product_id']
         products_sold = data['products_sold']
-        seller_id = data['seller_id']
 
         if valid:
             if Sale.products:

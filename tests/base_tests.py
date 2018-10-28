@@ -71,3 +71,9 @@ class BaseTestCase(TestCase):
             ),
             content_type='application/json'
         )
+
+    def delete_product(self, product_id):
+        "allows user to delete a product"
+        return self.client.delete(
+            '/api/v1/products/{}'.format(product_id),
+        )

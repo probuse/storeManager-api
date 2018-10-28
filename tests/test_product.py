@@ -218,4 +218,20 @@ class ProductTestCase(TestCase):
         self.assertEqual(
             {'result': 'Product successfully updated'},
             result
+        )   
+
+    def test_user_cannot_delete_product_if_no_products_exist(self):
+        "Tests user can only delete existing products"
+        result = self.product_obj.delete_product(1)
+        self.assertEqual(
+            {'message': 'No Products added yet'},
+            result
         )
+
+    def test_deleted_product_no_longer_exists_in_system(self):
+        "Tests if delete product has been deleted from system"
+        self.product_obj.add_product(**self.product_data)
+        self.product_obj.add_product(product_name="omo", product_price=2300)
+        self.product_obj.delete_product(1)
+        response = self.product_obj.get_product(1)
+        self.assertEqual({'message': 'Product with id 1 does not exist'}, response)

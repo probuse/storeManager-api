@@ -73,3 +73,31 @@ class ProductTestCase(BaseTestCase):
                 b'{"message": "Product with id 2 does not exist"}', 
                 response.data
             )
+            
+    def test_user_can_send_a_delete_request_to_products_endpoint_successfully(self):
+        "Tests user can successfully send delete request"
+        with self.client:
+            response = self.delete_product(1)
+            self.assertEqual(response.status_code, 200)
+
+    def test_user_cannot_delete_product_if_no_products_are_added_yet(self):
+        "Tests user can only delete product if products have been added"
+        with self.client:
+            response = self.delete_product(1)
+            self.assertIn(b'{"message": "No Products added yet"}', response.data)
+
+    def test_user_can_delete_product_if_it_exists(self):
+        "Tests user can only delete product if it exists"
+        with self.client:
+            self.add_product("soda", 3000)
+            response = self.delete_product(1)
+            self.assertIn(
+                b'{"result": "Product successfully deleted"}', response.data)
+
+    def test_user_cannot_delete_product_which_does_not_exist(self):
+        "Tests user can only delete product if it exists"
+        with self.client:
+            self.add_product("soda", 3000)
+            response = self.delete_product(2)
+            self.assertIn(
+                b'{"message": "Product with id 2 does not exist"}', response.data)

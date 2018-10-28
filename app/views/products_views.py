@@ -5,7 +5,7 @@ from flask import request, jsonify
 from flask_restful import Resource, Api, reqparse
 from app.models.product import Product
 
-products = Product.products
+# products = Product.products
 product_obj = Product()
 
 class SingleProductEndPoint(Resource):

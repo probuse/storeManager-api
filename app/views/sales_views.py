@@ -4,10 +4,10 @@
 from flask import request, jsonify
 from flask_restful import Resource, Api, reqparse
 from app.models.sale import Sale
-from app.views.products_views import products as _products
+# from app.views.products_views import products as _products
 
-products = _products
-sales = Sale.sales
+# products = _products
+# sales = Sale.sales
 sales_obj = Sale()
 
 class SingleSaleEndPoint(Resource):

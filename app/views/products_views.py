@@ -14,6 +14,24 @@ class SingleProductEndPoint(Resource):
         'Returns a single product with id of product_id'
         response = product_obj.get_product(product_id)
         return response
+    
+    def put(self, product_id):
+        "modify product with given product_id"
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+            'product_name',
+            type=str,
+            required=True,
+            help="Product name can not be empty"
+        )
+        parser.add_argument(
+            'product_price',
+            type=int,
+            required=True,
+            help="Product price can not be empty"
+        )
+        args = parser.parse_args()
+        return product_obj.modify_product(product_id, **args)
 
 
 class ProductEndPoint(Resource):
@@ -30,13 +48,13 @@ class ProductEndPoint(Resource):
             'product_name', 
             type=str, 
             required=True,
-            help="Product Name must be a string" 
+            help="Product Name can not be empty" 
         )
         parser.add_argument(
             'product_price', 
             type=int, 
             required=True,
-            help="Product Price must be an integer" 
+            help="Product Price can not be empty" 
         )
         args = parser.parse_args()
         response = product_obj.add_product(**args)

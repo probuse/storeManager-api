@@ -181,3 +181,41 @@ class ProductTestCase(TestCase):
                 "product_price": "Product Price can not be less than one",
                 "product_name": "Product Name must be a string"
             }, result)
+
+    def test_user_cannot_modify_product_if_no_products_exist(self):
+        "Tests user can only modify existing products"
+        result = self.product_obj.modify_product(
+            product_id=1,
+            product_name="magic",
+            product_price=3200
+        )
+        self.assertEqual(
+            {'message': 'No Products added yet'},
+            result
+        )
+
+    def test_user_can_not_modify_product_with_invalid_product_id(self):
+        "Tests user can not modify product whose id does not exist"
+        self.product_obj.add_product(**self.product_data)
+        result = self.product_obj.modify_product(
+            product_id=2,
+            product_name="magic",
+            product_price=3200
+        )
+        self.assertEqual(
+            {'message': 'Product with id 2 does not exist'},
+            result
+        )
+
+    def test_user_can_modify_product_successfully(self):
+        "Tests user can modify product successfully"
+        self.product_obj.add_product(**self.product_data)
+        result = self.product_obj.modify_product(
+            product_id=1,
+            product_name="magic",
+            product_price=3200
+        )
+        self.assertEqual(
+            {'result': 'Product successfully updated'},
+            result
+        )

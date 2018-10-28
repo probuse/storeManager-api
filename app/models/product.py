@@ -115,6 +115,26 @@ class Product:
             }
         return {'message': 'No Products added yet'}
 
+    def modify_product(self, product_id, **data):
+        "updates product"
+        valid, errors = self.validate_product(**data)
+        product_id = product_id
+        product_name = data.get('product_name')
+        product_price = data.get('product_price')
+
+        products = Product.products
+        if products:
+            for i in range(len(products)):
+                if products[i].product_id == int(product_id):
+                    products[i].product_name = product_name
+                    products[i].product_price = product_price
+
+                    return {'result': 'Product successfully updated'}
+            return {
+                'message': 'Product with id {} does not exist'.format(product_id)
+            }
+        return {'message': 'No Products added yet'}
+
     def validate_product(self, **data):
         "validates product"
         is_price_valid = False
@@ -123,7 +143,7 @@ class Product:
         product_name = data['product_name']
         product_price = data['product_price']
 
-        errors = {}
+        errors = {} 
         try:
             product_price = int(product_price)
             if product_price < 1:

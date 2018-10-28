@@ -47,3 +47,16 @@ class User:
                 usernames, user_id),
         }, 201
 
+    def login_user(self, **data):
+        "logs in user"
+        email = data.get('email')
+        password = data.get('password')
+        is_admin = data.get('is_admin')
+
+        user_id = len(User.store_attendants) + 1
+        store_attendants = User.store_attendants
+
+        if not is_admin:
+            return {'message': "You are a store attendant"}, 201
+        return {'message': 'You are admin'}, 201
+

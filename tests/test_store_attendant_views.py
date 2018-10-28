@@ -16,8 +16,8 @@ class StoreAttendantTestCase(BaseTestCase):
             password="12345678"
         )
 
-    def test_post_to_store_attendant_returns_200_status_code(self):
-        "Tests if post request to store attendant returns 200"
+    def test_post_to_store_attendant_returns_201_status_code(self):
+        "Tests if post request to store attendant returns 201"
         with self.client: 
             response = self.register_store_attendant(**self.store_attendant_data)
             self.assertEqual(response.status_code, 201)

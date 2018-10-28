@@ -102,3 +102,31 @@ class BaseTestCase(TestCase):
             ),
             content_type='application/json'
         )
+
+    def login_store_attendant_user(self, email, password):
+        "allows store attendant to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=False
+                                   )
+            ),
+            content_type='application/json'
+        )
+
+    def login_admin_user(self, email, password):
+        "allows admin to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=True
+                                   )
+            ),
+            content_type='application/json'
+        )

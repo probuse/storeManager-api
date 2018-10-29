@@ -59,10 +59,10 @@ class User:
         if is_admin:
             if email == "admin@gmail.com" and password == "admin":
                 return {'message': 'we are logging you in as admin'}, 200
-            return {'message': 'email {} does not belong to admin account'}, 401
-            
+            return {'message': 'email {} does not belong to admin account'.format(email)}, 401
+
         for attendant in store_attendants:
             if attendant.email == email and attendant.password == password:
                 return {'message': 'You are a registered store attendant'}, 200
-        return {'message': 'User with email {} does not exist'.format(email)}, 401
+        return {'message': 'Store attendant with email {} does not exist'.format(email)}, 401
 

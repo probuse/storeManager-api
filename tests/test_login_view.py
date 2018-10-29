@@ -83,7 +83,7 @@ class LoginTestCase(BaseTestCase):
             response = self.login_store_attendant_user(
                 **self.store_attendant_invalid_login_data)
             self.assertIn(
-                b'{"message": "User with email cordelia@herself.com does not exist"}',
+                b'{"message": "Store attendant with email cordelia@herself.com does not exist"}',
                 response.data)
 
     def test_admin_post_request_to_login_returns_200_status_code(self):
@@ -115,6 +115,6 @@ class LoginTestCase(BaseTestCase):
             response = self.login_admin_user(
                 **self.admin_invalid_login_data)
             self.assertIn(
-                b'{"message": "email {} does not belong to admin account"}',
+                b'{"message": "email notadmin@gmail.com does not belong to admin account"}',
                 response.data
             )

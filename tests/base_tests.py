@@ -103,7 +103,7 @@ class BaseTestCase(TestCase):
             content_type='application/json'
         )
 
-    def login_store_attendant_user(self, email, password):
+    def login_store_attendant_user(self, email, password, is_admin):
         "allows store attendant to login"
         return self.client.post(
             '/api/v1/auth/login',
@@ -111,13 +111,13 @@ class BaseTestCase(TestCase):
                 dict(
                     email=email,
                     password=password, 
-                    is_admin=False
+                    is_admin=is_admin
                                    )
             ),
             content_type='application/json'
         )
 
-    def login_admin_user(self, email, password):
+    def login_admin_user(self, email, password, is_admin):
         "allows admin to login"
         return self.client.post(
             '/api/v1/auth/login',
@@ -125,7 +125,7 @@ class BaseTestCase(TestCase):
                 dict(
                     email=email,
                     password=password, 
-                    is_admin=True
+                    is_admin=is_admin
                                    )
             ),
             content_type='application/json'

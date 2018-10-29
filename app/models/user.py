@@ -56,7 +56,13 @@ class User:
         user_id = len(User.store_attendants) + 1
         store_attendants = User.store_attendants
 
-        if not is_admin:
-            return {'message': "You are a store attendant"}, 201
-        return {'message': 'You are admin'}, 201
+        if is_admin:
+            if email == "admin@gmail.com" and password == "admin":
+                return {'message': 'we are logging you in as admin'}, 200
+            return {'message': 'email {} does not belong to admin account'}, 401
+            
+        for attendant in store_attendants:
+            if attendant.email == email and attendant.password == password:
+                return {'message': 'You are a registered store attendant'}, 200
+        return {'message': 'User with email {} does not exist'.format(email)}, 401
 

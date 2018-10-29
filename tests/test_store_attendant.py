@@ -12,13 +12,13 @@ class StoreAttendantTestCase(TestCase):
             usernames = "etwin himself",
             email = "etwin@himself.com",
             phone_number = "704800666",
-            password = 12345678
+            password = "12345678"
         )
 
         self.store_attendant_data = dict(
             usernames="etwin himself",
             email="etwin@himself.com",
-            phone_number=704800666,
+            phone_number="704800666",
             password="12345678"
         )
 
@@ -29,7 +29,7 @@ class StoreAttendantTestCase(TestCase):
     def test_store_attendant_object_created_successfully(self):
         "Tests if store attendant object is created"
         self.assertListEqual(
-            [None, "etwin himself", "etwin@himself.com", "704800666", 12345678],
+            [None, "etwin himself", "etwin@himself.com", "704800666", "12345678"],
             [
                 self.store_attendant_obj.user_id,
                 self.store_attendant_obj.usernames,
@@ -84,7 +84,7 @@ class StoreAttendantTestCase(TestCase):
     def test_get_password(self):
         "Tests if getter method works"
         self.assertEqual(
-            12345678, self.store_attendant_obj.password)
+            "12345678", self.store_attendant_obj.password)
 
     def test_set_password(self):
         "Tests if setter method works"

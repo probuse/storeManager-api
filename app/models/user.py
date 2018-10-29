@@ -64,3 +64,23 @@ class User:
             return {'result': response_data}
 
         return {'message': 'No store attendants added yet'}
+
+    def login_user(self, **data):
+        "logs in user"
+        email = data.get('email')
+        password = data.get('password')
+        is_admin = data.get('is_admin')
+
+        user_id = len(User.store_attendants) + 1
+        store_attendants = User.store_attendants
+
+        if is_admin:
+            if email == "admin@gmail.com" and password == "admin":
+                return {'message': 'we are logging you in as admin'}, 200
+            return {'message': 'email {} does not belong to admin account'.format(email)}, 401
+
+        for attendant in store_attendants:
+            if attendant.email == email and attendant.password == password:
+                return {'message': 'You are a registered store attendant'}, 200
+        return {'message': 'Store attendant with email {} does not exist'.format(email)}, 401
+

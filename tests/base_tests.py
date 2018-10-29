@@ -106,3 +106,31 @@ class BaseTestCase(TestCase):
     def get_store_attendants(self):
         "return all available store attendants"
         return self.client.get('/api/v1/store-attendants')
+
+    def login_store_attendant_user(self, email, password, is_admin):
+        "allows store attendant to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=is_admin
+                                   )
+            ),
+            content_type='application/json'
+        )
+
+    def login_admin_user(self, email, password, is_admin):
+        "allows admin to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=is_admin
+                                   )
+            ),
+            content_type='application/json'
+        )

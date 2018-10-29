@@ -47,3 +47,20 @@ class User:
                 usernames, user_id),
         }, 201
 
+    def get_store_attendants(self):
+        "returns all store attendants"
+        store_attendants = User.store_attendants
+        response_data = []
+        if store_attendants:
+            for attendant in store_attendants:
+                data = dict(
+                    user_id=attendant.user_id,
+                    usernames=attendant.usernames,
+                    email=attendant.email,
+                    phone_number=attendant.phone_number,
+                    password=attendant.password
+                )
+                response_data.append(data)
+            return {'result': response_data}
+
+        return {'message': 'No store attendants added yet'}

@@ -102,3 +102,7 @@ class BaseTestCase(TestCase):
             ),
             content_type='application/json'
         )
+
+    def get_store_attendants(self):
+        "return all available store attendants"
+        return self.client.get('/api/v1/store-attendants')

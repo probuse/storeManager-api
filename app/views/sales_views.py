@@ -28,21 +28,21 @@ class SaleEndPoint(Resource):
             'product_id', 
             type=int, 
             required=True,
-            help="Product id must be an integer" 
+            help="Product_id can not be empty" 
         )
 
         parser.add_argument(
             'products_sold', 
             type=int, 
             required=True,
-            help="Products sold must be an integer" 
+            help="Products_sold can not be empty" 
         )
 
         parser.add_argument(
             'seller_id',
             type=int,
             required=True,
-            help="seller_id must be an integer"
+            help="seller_id can not be empty"
         )
 
         args = parser.parse_args()

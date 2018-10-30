@@ -1,6 +1,8 @@
 """
     Contains implementation of the Sale class
 """
+from app import app
+from db_helper import DBHelper
 from datetime import datetime
 from app.models.product import Product
 class Sale:
@@ -14,6 +16,8 @@ class Sale:
         self._products_sold = kwargs.get("products_sold", None)
         self._seller_id = kwargs.get("seller_id", None)
         self.sale_date = str(datetime.now().date())
+
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
 
     @property
     def sale_id(self):
@@ -55,64 +59,72 @@ class Sale:
         "sets seller_id"
         self._seller_id = seller_id
 
-    def get_sale(self, sale_id):
-        "returns a sale with sale id"
-        if Sale.products:
-            if Sale.sales:
-                for sale in Sale.sales:
-                    if sale.sale_id == int(sale_id):
-                        response_data = dict(
-                                sale_id=sale.sale_id,
-                                product_id=sale.product_id,
-                                products_sold=sale.products_sold,
-                                sale_date=sale.sale_date
-                            )
-                        return response_data
-                return {'message': 'Sale with id {} does not exist'.format(sale_id)}
-            return {'message': 'No Sales made yet'}
-        return {'message': 'No products added yet'}
-    
-    def get_sales(self):
-        "returns all sales"
-        response_data = []
-        if Sale.sales:
-            for sale in Sale.sales:
-                data = dict(
-                    sale_id = sale.sale_id,
-                    product_id = sale.product_id,
-                    products_sold = sale.products_sold,
-                    sale_date = sale.sale_date
-                )
-                response_data.append(data)
-            return response_data
-        return {'message': 'No Sales made yet'}
-
     def add_sale(self, **data):
         "Adds a sale"
+        products = self.db_helper.get_products_from_db()
+
         valid, errors = self.validate_sale(**data)
         product_id = data['product_id']
         products_sold = data['products_sold']
+        seller_id = data['seller_id']
+        sale_date = str(datetime.now().date())
 
         if valid:
-            if Sale.products:
-                for product in Sale.products:
-                    if product.product_id == int(product_id):
+            if products:
+                for product in products:
+                    if product['product_id'] == int(product_id):
                         sale = Sale(
-                            product_id = product.product_id,
-                            products_sold = products_sold 
+                            product_id=product_id,
+                            products_sold=products_sold, 
+                            seller_id=seller_id,
+                            sale_date=sale_date
                         )
-                        sale.sale_id = len(Sale.sales) + 1
-                        Sale.sales.append(sale)
+                        self.db_helper.add_sale_to_db(sale)
+
                         return {
                             'message': '{} {}(s) successfully sold'.format(
-                                products_sold, 
-                                product.product_name
+                                    products_sold, 
+                                    product['product_name']
                                 )
                         }
             return {
                 'message': 'Product with Product id {} does not exist'.format(product_id)
                 }
         return errors
+
+    def get_sale(self, sale_id):
+        "returns a sale with sale id"
+        sales = self.db_helper.get_sales_from_db()
+        sale = self.db_helper.get_a_sale_from_db(sale_id)
+
+        if sales:
+            if sale:
+                response_data = dict(
+                        sale_id=sale['sale_id'],
+                        product_id=sale['product_id'],
+                        products_sold=sale['products_sold'],
+                        sale_date=sale['sale_date']
+                    )
+                return response_data
+            return {'message': 'Sale with id {} does not exist'.format(sale_id)}
+        return {'message': 'No Sales made yet'}
+    
+    def get_sales(self):
+        "returns all sales"
+        sales = self.db_helper.get_sales_from_db()
+
+        response_data = []
+        if sales:
+            for sale in sales:
+                data = dict(
+                    sale_id = sale['sale_id'],
+                    product_id = sale['product_id'],
+                    products_sold = sale['products_sold'],
+                    sale_date = sale['sale_date']
+                )
+                response_data.append(data)
+            return response_data
+        return {'message': 'No Sales made yet'}
 
     def validate_sale(self, **data):
         "validates product"

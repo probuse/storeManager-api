@@ -29,11 +29,11 @@ class DBHelper:
         "creates users table"
         sql = """CREATE TABLE IF NOT EXISTS users (
                     user_id SERIAL PRIMARY KEY,
-                    usernames varchar,
-                    email varchar NOT NULL UNIQUE,
-                    phone_number varchar,
+                    usernames VARCHAR,
+                    email VARCHAR NOT NULL UNIQUE,
+                    phone_number VARCHAR,
                     is_admin BOOl NOT NULL,
-                    password varchar NOT NULL   
+                    password VARCHAR NOT NULL   
                 )
                 """
         self.cur.execute(sql)
@@ -42,7 +42,7 @@ class DBHelper:
         "creates products table"
         sql = """CREATE TABLE IF NOT EXISTS products (
                     product_id SERIAL PRIMARY KEY,
-                    product_name varchar NOT NULL UNIQUE,
+                    product_name VARCHAR NOT NULL UNIQUE,
                     product_price INTEGER NOT NULL,
                     product_quantity INTEGER NOT NULL
                 )
@@ -54,9 +54,9 @@ class DBHelper:
         sql = """CREATE TABLE IF NOT EXISTS sales (
                     sale_id SERIAL PRIMARY KEY,
                     products_sold INTEGER NOT NULL,
-                    user_id INTEGER NOT NULL,
+                    seller_id INTEGER NOT NULL,
                     product_id INTEGER NOT NULL,
-                    created_at TIMESTAMP DEFAULT now()
+                    sale_date VARCHAR NOT NULL
                 )
                 """
         self.cur.execute(sql)
@@ -83,7 +83,7 @@ class DBHelper:
         sql = "SELECT * FROM users"
         self.cur.execute(sql)
         return self.cur.fetchall()
-
+        
     def add_product_to_db(self, product):
         "adds product to database"
         sql = """INSERT INTO products
@@ -130,6 +130,34 @@ class DBHelper:
         "deletes a product with product_id"
         sql = "DELETE FROM products WHERE product_id = %s"
         self.cur.execute(sql, product_id)
+
+    def add_sale_to_db(self, sale):
+        "adds sale to database"
+        sql = """INSERT INTO sales
+                (product_id, products_sold, seller_id, sale_date)
+                VALUES (%s, %s, %s, %s)
+                """
+        self.cur.execute(
+            sql,
+            (
+                sale.product_id,
+                sale.products_sold,
+                sale.seller_id,
+                sale.sale_date
+            )
+        )
+
+    def get_sales_from_db(self):
+        "gets all sales"
+        sql = "SELECT * FROM sales"
+        self.cur.execute(sql)
+        return self.cur.fetchall()
+
+    def get_a_sale_from_db(self, sale_id):
+        "gets a sale with sale_id"
+        sql = "SELECT * FROM sales WHERE sale_id = %s"
+        self.cur.execute(sql, sale_id)
+        return self.cur.fetchone()
 
     def drop_table(self):
         "drop database tables"

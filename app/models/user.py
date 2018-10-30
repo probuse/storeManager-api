@@ -1,7 +1,8 @@
 """
     contains implementation for StoreAttendant class
 """
-
+from db_helper import DBHelper
+from app import app
 class User:
 
     store_attendants = []
@@ -13,6 +14,8 @@ class User:
         self.is_admin = kwargs.get('is_admin', False)
         self.phone_number = kwargs.get('phone_number', None)
         self.password = kwargs.get('password')
+
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
     
     def register_store_attendant(self, **data):
         "adds store attendant"
@@ -21,44 +24,46 @@ class User:
         phone_number = data.get('phone_number')
         password = data.get('password')
 
-        user_id = len(User.store_attendants) + 1
-        store_attendants = User.store_attendants
+        # user_id = len(User.store_attendants) + 1
+        # store_attendants = User.store_attendants
 
-        if store_attendants:
-            for attendant in store_attendants:
-                if attendant.email == email:
-                    return {
-                        'message': 'Store Attendentant with email {} already exists'.format(
-                            email
-                        )
-                    }
-                elif attendant.user_id == user_id:
-                    store_attendant_id += 1
+        # if store_attendants:
+        #     for attendant in store_attendants:
+        #         if attendant.email == email:
+        #             return {
+        #                 'message': 'Store Attendentant with email {} already exists'.format(
+        #                     email
+        #                 )
+        #             }
+        #         elif attendant.user_id == user_id:
+        #             store_attendant_id += 1
         store_attendant = User(
             usernames=usernames,
             email=email,
             phone_number=phone_number,
+            is_admin=False,
             password=password
         )
-        store_attendant.user_id = user_id
-        store_attendants.append(store_attendant)
+
+        self.db_helper.add_user_to_db(store_attendant)
+
         return {
-            'message': 'Store Attendant {} with id {} successfully added'.format(
-                usernames, user_id),
+            'message': 'Store Attendant successfully added',
         }, 201
 
     def get_store_attendants(self):
         "returns all store attendants"
-        store_attendants = User.store_attendants
+        store_attendants = self.db_helper.get_store_attendants_from_db()
+
         response_data = []
         if store_attendants:
             for attendant in store_attendants:
                 data = dict(
-                    user_id=attendant.user_id,
-                    usernames=attendant.usernames,
-                    email=attendant.email,
-                    phone_number=attendant.phone_number,
-                    password=attendant.password
+                    user_id=attendant['user_id'],
+                    usernames=attendant['usernames'],
+                    email=attendant['email'],
+                    phone_number=attendant['phone_number'],
+                    password=attendant['password']
                 )
                 response_data.append(data)
             return {'result': response_data}

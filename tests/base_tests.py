@@ -23,13 +23,14 @@ class BaseTestCase(TestCase):
         "get request to home view"
         return self.client.get('/')
 
-    def add_product(self, product_name, product_price):
+    def add_product(self, product_name, product_price, product_quantity):
         "allows user to add a product"
         return self.client.post(
             '/api/v1/products',
             data = json.dumps(dict(
                 product_name=product_name,
                 product_price=product_price,
+                product_quantity=product_quantity
             )
         ),
             content_type='application/json'
@@ -40,9 +41,9 @@ class BaseTestCase(TestCase):
         "return all available products"
         return self.client.get('/api/v1/products')
 
-    def get_a_product(self, product_id):
+    def get_a_product(self, product_name):
         "returns a single product"
-        return self.client.get('/api/v1/products/{}'.format(product_id))
+        return self.client.get('/api/v1/products/{}'.format(product_name))
 
     def add_sale(self, product_id, products_sold, seller_id):
         "allows user to add a sale"
@@ -66,13 +67,14 @@ class BaseTestCase(TestCase):
         "returns a single sale"
         return self.client.get('/api/v1/sales/{}'.format(sale_id))
 
-    def modify_product(self,product_id, product_name, product_price):
+    def modify_product(self, product_name, product_price, product_quantity):
         "allows user to modiy a product"
         return self.client.put(
-            '/api/v1/products/{}'.format(product_id),
+            '/api/v1/products/{}'.format(product_name),
             data=json.dumps(dict(
                 product_name=product_name,
                 product_price=product_price,
+                product_quantity=product_quantity
             )
             ),
             content_type='application/json'

@@ -95,14 +95,17 @@ class DBHelper:
                 (product_name, product_price, product_quantity)
                 VALUES (%s, %s, %s)
                 """
-        self.cur.execute(
-            sql,
-            (
-                product.product_name,
-                product.product_price,
-                product.product_quantity
+        try:
+            self.cur.execute(
+                sql,
+                (
+                    product.product_name,
+                    product.product_price,
+                    product.product_quantity
+                )
             )
-        )
+        except psycopg2.IntegrityError :
+            return 'Product Already Exists'
     
     def get_products_from_db(self):
         "gets all products"
@@ -110,10 +113,10 @@ class DBHelper:
         self.cur.execute(sql)
         return self.cur.fetchall()
 
-    def get_a_product_from_db(self, product_id):
-        "gets a product with product_id"
-        sql = "SELECT * FROM products WHERE product_id = %s"
-        self.cur.execute(sql, product_id)
+    def get_a_product_from_db(self, product_name):
+        "gets a product with product_name"
+        sql = "SELECT * FROM products WHERE product_name = %s"
+        self.cur.execute(sql, [product_name])
         return self.cur.fetchone()
 
     def modify_a_product_in_db(self, product):
@@ -131,10 +134,15 @@ class DBHelper:
             )
         )
     
-    def delete_a_product_from_db(self, product_id):
-        "deletes a product with product_id"
-        sql = "DELETE FROM products WHERE product_id = %s"
-        self.cur.execute(sql, product_id)
+    def delete_a_product_from_db(self, product_name):
+        "deletes a product with product_name"
+        sql = "DELETE FROM products WHERE product_name = %s"
+        self.cur.execute(sql, [product_name])
+
+    def delete_all_products(self):
+        "deletes all products"
+        sql = "DELETE FROM products"
+        self.cur.execute(sql)
 
     def add_sale_to_db(self, sale):
         "adds sale to database"

@@ -1,6 +1,8 @@
 """
     This contains implementation of the Product class
 """
+from app import app
+from db_helper import DBHelper
 class Product:
     "Class for creating all objects in store"
     products = []
@@ -12,6 +14,7 @@ class Product:
         self._product_price = kwargs.get('product_price', None)
         self._product_quantity = kwargs.get('product_quantity', 1)
 
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
 
     @property
     def product_id(self):
@@ -58,27 +61,18 @@ class Product:
         valid, errors = self.validate_product(**data)
         product_name = data['product_name']
         product_price = data['product_price']
-        product_id = len(Product.products) + 1
+        product_quantity = data['product_quantity']
+
+
+        product = Product(
+            product_name=product_name,
+            product_price=product_price,
+            product_quantity=product_quantity
+        )
 
         if valid:
-            if Product.products:
-                for product in Product.products:
-                    if product.product_name == product_name:
-                        return {
-                            'message' : 'Product {} already exists'.format(product_name)
-                        }
-                    elif product.product_id == product_id:
-                        product_id += 1
-            new_product = Product(
-                product_name = product_name,
-                product_price = product_price,
-            )
-            new_product.product_id = product_id
-            Product.products.append(new_product)
-            return {
-                'message': 'Product {} with id {} successfully added'.format(
-                    product_name, product_id),
-                }, 201
+            self.db_helper.add_product_to_db(product)
+            return {'message': 'Product successfully added',}, 201
         else:
             return errors
 
@@ -86,13 +80,14 @@ class Product:
     def get_all_products(self):
         "returns a list of all products"
         response_data = []
-        if Product.products:
-            for product in Product.products:
+        products = self.db_helper.get_products_from_db()
+        if products:
+            for product in products:
                 data = dict(
-                    product_id = product.product_id,
-                    product_name = product.product_name,
-                    product_price = product.product_price,
-                    product_quantity = product.product_quantity
+                    product_id = product['product_id'],
+                    product_name = product['product_name'],
+                    product_price = product['product_price'],
+                    product_quantity = product['product_quantity']
                 )
                 response_data.append(data)
             return {'result': response_data}
@@ -101,16 +96,18 @@ class Product:
 
     def get_product(self, product_id):
         "returns product whose id is product_id"
-        if Product.products:
-            for product in Product.products:
-                if product.product_id == int(product_id):
-                    response_data = dict(
-                            product_id=product.product_id,
-                            product_name=product.product_name,
-                            product_price=product.product_price,
-                            product_quantity=product.product_quantity
-                        )
-                    return {'result': response_data}
+        products = self.db_helper.get_products_from_db()
+        product = self.db_helper.get_a_product_from_db(product_id)
+
+        if products:
+            if product:
+                response_data = dict(
+                        product_id=product['product_id'],
+                        product_name=product['product_name'],
+                        product_price=product['product_price'],
+                        product_quantity=product['product_quantity']
+                    )
+                return {'result': response_data}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }
@@ -118,17 +115,23 @@ class Product:
 
     def modify_product(self, product_id, **data):
         "updates product"
+        products = self.db_helper.get_products_from_db()
+        product = self.db_helper.get_a_product_from_db(product_id)
+
         product_name = data.get('product_name')
         product_price = data.get('product_price')
+        product_quantity = data.get('product_quantity')
 
-        products = Product.products
+        product_obj = Product(
+            product_name=product_name,
+            product_price=product_price,
+            product_quantity=product_quantity
+        ) 
+
         if products:
-            for i in range(len(products)):
-                if products[i].product_id == int(product_id):
-                    products[i].product_name = product_name
-                    products[i].product_price = product_price
-
-                    return {'result': 'Product successfully updated'}
+            if product:
+                self.db_helper.modify_a_product_in_db(product_obj)
+                return {'result': 'Product successfully updated'}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }
@@ -136,14 +139,12 @@ class Product:
 
     def delete_product(self, product_id):
         "deletes a product"
-        product_id = product_id
-
-        products = Product.products
+        products = self.db_helper.get_products_from_db()
+        product = self.db_helper.get_a_product_from_db(product_id)
         if products:
-            for i in range(len(products)):
-                if products[i].product_id == int(product_id):
-                    products.remove(products[i])
-                    return {'result': 'Product successfully deleted'}
+            if product:
+                self.db_helper.delete_a_product_from_db(product_id)
+                return {'result': 'Product successfully deleted'}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }

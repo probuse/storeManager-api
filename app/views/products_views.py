@@ -29,6 +29,13 @@ class SingleProductEndPoint(Resource):
             required=True,
             help="Product price can not be empty"
         )
+
+        parser.add_argument(
+            'product_quantity',
+            type=int,
+            required=True,
+            help="Product quantity can not be empty"
+        )
         args = parser.parse_args()
         return product_obj.modify_product(product_id, **args)
 
@@ -58,6 +65,12 @@ class ProductEndPoint(Resource):
             type=int, 
             required=True,
             help="Product Price can not be empty" 
+        )
+        parser.add_argument(
+            'product_quantity',
+            type=int,
+            required=True,
+            help="Product quantity can not be empty"
         )
         args = parser.parse_args()
         response = product_obj.add_product(**args)

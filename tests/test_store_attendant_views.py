@@ -1,6 +1,9 @@
 """
     contains test for store attendant endpoint
 """
+import json
+from app import app
+from db_helper import DBHelper
 from tests.base_tests import BaseTestCase
 
 class StoreAttendantTestCase(BaseTestCase):
@@ -9,11 +12,18 @@ class StoreAttendantTestCase(BaseTestCase):
     def setUp(self):
         "Initialize variables"
         super(StoreAttendantTestCase, self).setUp()
+
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
+
         self.store_attendant_data = dict(
             usernames="etwin himself",
             email="etwin@himself.com",
             phone_number=704800666,
             password="12345678"
+        )
+
+        self.db_helper.delete_store_attendant_user(
+            self.store_attendant_data['email']
         )
 
     def test_post_to_store_attendant_returns_201_status_code(self):
@@ -26,9 +36,10 @@ class StoreAttendantTestCase(BaseTestCase):
         "Tests post request to store attendant returns success message"
         with self.client:
             response = self.register_store_attendant(**self.store_attendant_data)
+            resp = json.loads(response.data.decode())
             self.assertIn(
-                b'{"message": "Store Attendant etwin himself with id 1 successfully added"}', 
-                response.data)
+                "Store Attendant successfully added", 
+                resp['message'])
 
     def test_get_all_store_attendants_returns_200_status_code(self):
         "Tests if get_store_attendants returns 200 status code"
@@ -38,8 +49,9 @@ class StoreAttendantTestCase(BaseTestCase):
     def test_get_all_store_attendants_returns_no_store_attendants_added(self):
         "Tests if get_store_attendants returns no store attendants"
         response = self.get_store_attendants()
-        self.assertIn(
-            b'{"message": "No store attendants added yet"}', response.data)
+        resp = json.loads(response.data.decode())
+        self.assertEqual(
+            "No store attendants added yet", resp['message'])
 
     def test_get_all_store_attendants_returns_store_attendants_added(self):
         "Tests if get_store_attendants returns all store attendants"
@@ -47,8 +59,12 @@ class StoreAttendantTestCase(BaseTestCase):
             **self.store_attendant_data
         )
         response = self.get_store_attendants()
-        self.assertIn(
-            b'{"result": [{"user_id": 1, "usernames": "etwin himself", "email": "etwin@himself.com", "phone_number": "704800666", "password": "12345678"}]}',
-             response.data)
+        resp = json.loads(response.data.decode())
+        usernames = resp['result'][0]['usernames']
+        email = resp['result'][0]['email']
+        self.assertListEqual(
+            ["etwin himself", "etwin@himself.com"],
+            [usernames, email]
+        )
     
 

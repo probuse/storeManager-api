@@ -12,6 +12,7 @@ class LoginTestCase(BaseTestCase):
         "Initialize variables"
         super(LoginTestCase, self).setUp()
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        
         self.register_store_registration_data = dict(
             usernames="etwin himself",
             email="etwin@himself.com",

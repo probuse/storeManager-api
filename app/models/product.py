@@ -143,7 +143,6 @@ class Product:
             for i in range(len(products)):
                 if products[i].product_id == int(product_id):
                     products.remove(products[i])
-                    Product.recent_id += 1
                     return {'result': 'Product successfully deleted'}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)

@@ -4,8 +4,9 @@
 import json
 from unittest import TestCase
 from app import app
-from app.views.products_views import products
-from app.views.sales_views import sales
+from app.models.product import Product
+from app.models.sale import Sale
+from app.models.user import User
 
 class BaseTestCase(TestCase):
     def setUp(self):
@@ -14,8 +15,13 @@ class BaseTestCase(TestCase):
 
     def tearDown(self):
         "Drop all data structures used for storage"
-        products[:] = []
-        sales[:] = []
+        Product.products[:] = []
+        Sale.sales[:] = []
+        User.store_attendants[:] = []
+
+    def get_home_view(self):
+        "get request to home view"
+        return self.client.get('/')
 
     def add_product(self, product_name, product_price):
         "allows user to add a product"
@@ -76,4 +82,55 @@ class BaseTestCase(TestCase):
         "allows user to delete a product"
         return self.client.delete(
             '/api/v1/products/{}'.format(product_id),
+        )
+
+    def register_store_attendant(self, **data):
+        "allows admin to add a store attendant"
+        usernames = data.get('usernames')
+        email = data.get('email')
+        phone_number = data.get('phone_number')
+        password = data.get('password')
+        return self.client.post(
+            '/api/v1/auth/signup',
+            data=json.dumps(dict(
+                usernames=usernames,
+                email=email,
+                is_admin=False,
+                phone_number=phone_number,
+                password=password
+            )
+            ),
+            content_type='application/json'
+        )
+
+    def get_store_attendants(self):
+        "return all available store attendants"
+        return self.client.get('/api/v1/store-attendants')
+
+    def login_store_attendant_user(self, email, password, is_admin):
+        "allows store attendant to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=is_admin
+                                   )
+            ),
+            content_type='application/json'
+        )
+
+    def login_admin_user(self, email, password, is_admin):
+        "allows admin to login"
+        return self.client.post(
+            '/api/v1/auth/login',
+            data=json.dumps(
+                dict(
+                    email=email,
+                    password=password, 
+                    is_admin=is_admin
+                                   )
+            ),
+            content_type='application/json'
         )

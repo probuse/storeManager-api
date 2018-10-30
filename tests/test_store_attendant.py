@@ -1,6 +1,9 @@
 """
     contains tests for store attendant object
 """
+import json
+from app import app
+from db_helper import DBHelper
 from unittest import TestCase
 from app.models.user import User
 
@@ -8,6 +11,8 @@ class StoreAttendantTestCase(TestCase):
 
     def setUp(self):
         "Initialize variables"
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
+
         self.store_attendant_obj = User(
             usernames = "etwin himself",
             email = "etwin@himself.com",
@@ -20,6 +25,10 @@ class StoreAttendantTestCase(TestCase):
             email="etwin@himself.com",
             phone_number="704800666",
             password="12345678"
+        )
+
+        self.db_helper.delete_store_attendant_user(
+            self.store_attendant_data['email']
         )
 
     def tearDown(self):
@@ -100,6 +109,10 @@ class StoreAttendantTestCase(TestCase):
         "Tests if store attendant has attendant once attendant is added"
         self.store_attendant_obj.register_store_attendant(
             **self.store_attendant_data)
-        store_attendants = len(self.store_attendant_obj.store_attendants)
-        self.assertEqual(1, store_attendants)
+        store_attendants = self.store_attendant_obj.get_store_attendants()
+        # result = json.loads(store_attendants.
+        self.assertEqual(
+            store_attendants['result'][0]['email'],
+            'etwin@himself.com'
+        )
 

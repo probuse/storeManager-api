@@ -24,19 +24,6 @@ class User:
         phone_number = data.get('phone_number')
         password = data.get('password')
 
-        # user_id = len(User.store_attendants) + 1
-        # store_attendants = User.store_attendants
-
-        # if store_attendants:
-        #     for attendant in store_attendants:
-        #         if attendant.email == email:
-        #             return {
-        #                 'message': 'Store Attendentant with email {} already exists'.format(
-        #                     email
-        #                 )
-        #             }
-        #         elif attendant.user_id == user_id:
-        #             store_attendant_id += 1
         store_attendant = User(
             usernames=usernames,
             email=email,

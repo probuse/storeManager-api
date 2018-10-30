@@ -22,7 +22,7 @@ class DBHelper:
             port = port
         )  
         self.conn.autocommit = True
-        self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.DictCursor) 
+        self.cur = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) 
 
     # create tables
     def create_users_table(self):
@@ -83,6 +83,11 @@ class DBHelper:
         sql = "SELECT * FROM users"
         self.cur.execute(sql)
         return self.cur.fetchall()
+
+    def delete_store_attendant_user(self, email):
+        "deletes store attendant user"
+        sql = "DELETE FROM users WHERE email = %s"
+        self.cur.execute(sql, [email])
         
     def add_product_to_db(self, product):
         "adds product to database"

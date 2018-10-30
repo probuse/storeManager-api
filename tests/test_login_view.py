@@ -1,6 +1,9 @@
 """
     Contains tests for the login view
 """
+import json
+from app import app
+from db_helper import DBHelper
 from tests.base_tests import BaseTestCase
 
 class LoginTestCase(BaseTestCase):
@@ -8,6 +11,7 @@ class LoginTestCase(BaseTestCase):
     def setUp(self):
         "Initialize variables"
         super(LoginTestCase, self).setUp()
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
         self.register_store_registration_data = dict(
             usernames="etwin himself",
             email="etwin@himself.com",
@@ -40,6 +44,10 @@ class LoginTestCase(BaseTestCase):
             is_admin=True
         )
     
+        self.db_helper.delete_store_attendant_user(
+            self.store_attendant_valid_login_data['email']
+        )
+
     def test_store_attendant_post_request_to_login_returns_200_status_code(self):
         "Test post to login endpoint returns a success"
         with self.client:
@@ -59,9 +67,10 @@ class LoginTestCase(BaseTestCase):
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_valid_login_data)
+            resp = json.loads(response.data)
             self.assertIn(
-                b'{"message": "You are a registered store attendant"}',
-               response.data)
+                "You are a registered store attendant",
+               resp['message'])
 
     def test_store_attendant_invalid_login_credentials_returns_401(self):
         "Tests store attendant fails to login in"
@@ -82,9 +91,10 @@ class LoginTestCase(BaseTestCase):
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_invalid_login_data)
+            resp = json.loads(response.data)
             self.assertIn(
-                b'{"message": "Store attendant with email cordelia@herself.com does not exist"}',
-                response.data)
+                "Store attendant with email cordelia@herself.com does not exist",
+                resp['message'])
 
     def test_admin_post_request_to_login_returns_200_status_code(self):
         "Test post to login endpoint returns a success"
@@ -98,9 +108,10 @@ class LoginTestCase(BaseTestCase):
         with self.client:
             response = self.login_admin_user(
                 **self.admin_valid_login_data)
+            resp = json.loads(response.data)
             self.assertIn(
-                b'{"message": "we are logging you in as admin"}', 
-                response.data)
+                "we are logging you in as admin", 
+                resp['message'])
 
     def test_admin_user_log_in_with_invalid_credentials_returns_404(self):
         "Tests admin login with invalid credentials"
@@ -114,7 +125,8 @@ class LoginTestCase(BaseTestCase):
         with self.client:
             response = self.login_admin_user(
                 **self.admin_invalid_login_data)
+            resp = json.loads(response.data)
             self.assertIn(
-                b'{"message": "email notadmin@gmail.com does not belong to admin account"}',
-                response.data
+                "email notadmin@gmail.com does not belong to admin account",
+                resp['message']
             )

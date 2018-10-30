@@ -63,8 +63,7 @@ class User:
         password = data.get('password')
         is_admin = data.get('is_admin')
 
-        user_id = len(User.store_attendants) + 1
-        store_attendants = User.store_attendants
+        store_attendants = self.db_helper.get_store_attendants_from_db()
 
         if is_admin:
             if email == "admin@gmail.com" and password == "admin":
@@ -72,7 +71,7 @@ class User:
             return {'message': 'email {} does not belong to admin account'.format(email)}, 401
 
         for attendant in store_attendants:
-            if attendant.email == email and attendant.password == password:
+            if attendant['email'] == email and attendant['password'] == password:
                 return {'message': 'You are a registered store attendant'}, 200
         return {'message': 'Store attendant with email {} does not exist'.format(email)}, 401
 

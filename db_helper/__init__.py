@@ -147,13 +147,13 @@ class DBHelper:
     def add_sale_to_db(self, sale):
         "adds sale to database"
         sql = """INSERT INTO sales
-                (product_id, products_sold, seller_id, sale_date)
+                (product_name, products_sold, seller_id, sale_date)
                 VALUES (%s, %s, %s, %s)
                 """
         self.cur.execute(
             sql,
             (
-                sale.product_id,
+                sale.product_name,
                 sale.products_sold,
                 sale.seller_id,
                 sale.sale_date
@@ -169,7 +169,7 @@ class DBHelper:
     def get_a_sale_from_db(self, sale_id):
         "gets a sale with sale_id"
         sql = "SELECT * FROM sales WHERE sale_id = %s"
-        self.cur.execute(sql, sale_id)
+        self.cur.execute(sql,[sale_id])
         return self.cur.fetchone()
 
     def drop_table(self):

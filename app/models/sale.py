@@ -12,7 +12,7 @@ class Sale:
 
     def __init__(self, **kwargs):
         self._sale_id = None
-        self._product_id = kwargs.get("product_id", None)
+        self._product_name = kwargs.get("product_name", None)
         self._products_sold = kwargs.get("products_sold", None)
         self._seller_id = kwargs.get("seller_id", None)
         self.sale_date = str(datetime.now().date())
@@ -30,14 +30,14 @@ class Sale:
         self._sale_id = sale_id
 
     @property
-    def product_id(self):
-        "gets product id"
-        return self._product_id
+    def product_name(self):
+        "gets product name"
+        return self._product_name
 
-    @product_id.setter
-    def product_id(self, product_id):
-        "sets product id"
-        self._product_id = product_id
+    @product_name.setter
+    def product_name(self, product_name):
+        "sets product name"
+        self._product_name = product_name
 
     @property
     def products_sold(self):
@@ -64,7 +64,7 @@ class Sale:
         products = self.db_helper.get_products_from_db()
 
         valid, errors = self.validate_sale(**data)
-        product_id = data['product_id']
+        product_name = data['product_name']
         products_sold = data['products_sold']
         seller_id = data['seller_id']
         sale_date = str(datetime.now().date())
@@ -72,9 +72,9 @@ class Sale:
         if valid:
             if products:
                 for product in products:
-                    if product['product_id'] == int(product_id):
+                    if product['product_name'] == int(product_name):
                         sale = Sale(
-                            product_id=product_id,
+                            product_name=product_name,
                             products_sold=products_sold, 
                             seller_id=seller_id,
                             sale_date=sale_date
@@ -88,7 +88,7 @@ class Sale:
                                 )
                         }
             return {
-                'message': 'Product with Product id {} does not exist'.format(product_id)
+                'message': 'Product with Product name {} does not exist'.format(product_name)
                 }
         return errors
 
@@ -128,23 +128,23 @@ class Sale:
 
     def validate_sale(self, **data):
         "validates product"
-        is_product_id_valid = False
+        is_product_name_valid = False
         is_products_sold_valid = False
         is_seller_id_valid = False
 
-        product_id = data['product_id']
+        product_name = data['product_name']
         products_sold = data['products_sold']
         seller_id = data['seller_id']
 
         errors = {}
-        try:
-            product_id = int(product_id)
-            if product_id < 1:
-                errors['product_id'] = "Product id can not be less than one"
+
+        if not str(product_name).strip() == "":
+            if isinstance(product_name, str):
+                is_product_name_valid = True
             else:
-                is_product_id_valid = True
-        except ValueError:
-            errors['product_id'] = "Product id is not a number"
+                errors['product_name'] = "Product name is not a valid string"
+        else:
+            errors['product_name'] = "Product name can not be empty"
 
         try:
             products_sold = int(products_sold)
@@ -164,5 +164,5 @@ class Sale:
         except ValueError:
             errors['seller_id'] = "Seller id is not a number"
 
-        return is_product_id_valid and is_products_sold_valid \
+        return is_product_name_valid and is_products_sold_valid \
             and is_seller_id_valid, errors

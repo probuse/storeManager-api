@@ -25,10 +25,10 @@ class SaleEndPoint(Resource):
         'Handles all post requests to /sales endpoint'
         parser = reqparse.RequestParser()
         parser.add_argument(
-            'product_id', 
+            'product_name', 
             type=int, 
             required=True,
-            help="Product_id can not be empty" 
+            help="Product_name can not be empty" 
         )
 
         parser.add_argument(

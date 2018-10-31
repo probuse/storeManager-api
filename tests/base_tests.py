@@ -45,13 +45,13 @@ class BaseTestCase(TestCase):
         "returns a single product"
         return self.client.get('/api/v1/products/{}'.format(product_name))
 
-    def add_sale(self, product_id, products_sold, seller_id):
+    def add_sale(self, product_name, products_sold, seller_id):
         "allows user to add a sale"
         return self.client.post(
             '/api/v1/sales',
             data = json.dumps(
                 dict(
-                    product_id=product_id,
+                    product_name=product_name,
                     products_sold=products_sold,
                     seller_id = seller_id
                 )

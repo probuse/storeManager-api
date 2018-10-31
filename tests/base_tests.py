@@ -2,22 +2,20 @@
     This module will contain base tests for the api endpoints.
 """
 import json
+from app import app
+from db_helper import DBHelper
 from unittest import TestCase
 from app import app
-from app.models.product import Product
-from app.models.sale import Sale
-from app.models.user import User
 
 class BaseTestCase(TestCase):
     def setUp(self):
         "initialize up a client to for testing"
         self.client = app.test_client(self)
-
-    def tearDown(self):
-        "Drop all data structures used for storage"
-        Product.products[:] = []
-        Sale.sales[:] = []
-        User.store_attendants[:] = []
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
 
     def get_home_view(self):
         "get request to home view"

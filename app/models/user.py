@@ -3,6 +3,9 @@
 """
 from db_helper import DBHelper
 from app import app
+
+from flask_jwt_extended import create_access_token
+
 class User:
 
     store_attendants = []
@@ -67,11 +70,21 @@ class User:
 
         if is_admin:
             if email == "admin@gmail.com" and password == "admin":
-                return {'message': 'we are logging you in as admin'}, 200
+                admin = dict(
+                    email=email,
+                    is_admin=True
+                )
+                access_token = create_access_token(identity=admin)
+                return {'message': 'Logged in successfully as admin', 'token': access_token}, 200
             return {'message': 'email {} does not belong to admin account'.format(email)}, 401
 
         for attendant in store_attendants:
             if attendant['email'] == email and attendant['password'] == password:
-                return {'message': 'You are a registered store attendant'}, 200
+                admin = dict(
+                    email=email,
+                    is_admin=attendant.is_admin
+                )
+                access_token = create_access_token(identity=admin)
+                return {'message': 'Logged in successfully as store attendant', 'token': access_token}, 200
         return {'message': 'Store attendant with email {} does not exist'.format(email)}, 401
 

@@ -1,4 +1,3 @@
 """
     Contains helper functions
 """
-    

@@ -2,6 +2,8 @@
     Contains all the Views for the /products endpoint
 """
 from flask import request, jsonify
+from flask_jwt_extended import get_jwt_identity, jwt_required
+
 from flask_restful import Resource, Api, reqparse
 from app.models.product import Product
 
@@ -39,9 +41,14 @@ class SingleProductEndPoint(Resource):
         args = parser.parse_args()
         return product_obj.modify_product(**args)
 
+    @jwt_required
     def delete(self, product_name):
         "deletes product with a given product_name"
-        return product_obj.delete_product(product_name)
+        current_user = get_jwt_identity()
+        is_admin = current_user['is_admin']
+        if is_admin:   
+            return product_obj.delete_product(product_name)
+        return {'message': 'Only admin can delete a product'}
 
 
 class ProductEndPoint(Resource):

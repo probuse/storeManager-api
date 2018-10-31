@@ -1,22 +1,39 @@
 """
     This module contains sales for the product object
 """
+import json
+from app import app
+from db_helper import DBHelper
 from tests.base_tests import BaseTestCase
 
 class ProductTestCase(BaseTestCase):
     "TestCase to test ProductEndPoint"
 
+    def setUp(self):
+        "Initialize variables"
+        super(ProductTestCase, self).setUp()
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
+
+        self.db_helper.delete_all_products()
+
     def test_add_product_returns_201_status_code(self):
         "Test adding product returns 201 status code"
         with self.client:
-            response = self.add_product("egg", 500)
+            response = self.add_product("egg", 500, 1)
             self.assertEqual(response.status_code, 201)
 
     def test_add_product_returns_message_to_user_with_created_product(self):
         "Test adding product returns information of added product"
         with self.client:
-            response = self.add_product("egg", 500)
-            self.assertIn(b'Product egg with id 1 successfully added', response.data)
+            self.add_product("egg", 500, 1)
+            result = self.db_helper.get_a_product_from_db("egg")
+            product_name = result['product_name']
+            product_price =result['product_price']
+            product_quantity = result['product_quantity']
+            self.assertListEqual(
+                ["egg", 500, 1], 
+                [product_name, product_price, product_quantity]
+            )
 
     def test_get_products_returns_200_status_code(self):
         "Test product endpoint responds with a 200 status code"
@@ -31,73 +48,92 @@ class ProductTestCase(BaseTestCase):
             self.assertIn(b'No Products added yet', response.data)
 
     def test_get_a_product_returns_200_status_code(self):
-        "Test /product/<product_id> endpoint responds with a 200 status code"
+        "Test /product/<product_product_name> endpoint responds with a 200 status code"
         with self.client:
             response = self.get_a_product(1)
             self.assertEqual(response.status_code, 200)
 
-    def test_get_products_returns_no_product_if_product_id_doesnot_exist(self):
-        "Test product endpoint returns Product does not exists with invalid id"
+    def test_get_products_returns_no_product_if_product_name_doesnot_exist(self):
+        "Test product endpoint returns Product does not exists"
         with self.client:
-            self.add_product("egg", 500)
-            response = self.get_a_product(2)
-            self.assertIn(b'Product with id 2 does not exist', response.data)
+            self.add_product("egg", 500, 1)
+            response = self.get_a_product("invalid")
+            resp = json.loads(response.data.decode())
+            self.assertEqual("Product with name invalid does not exist", resp['message'])
 
     def test_user_can_send_a_put_request_to_products_endpoint_successfully(self):
         "Tests user can successfully send put request"
         with self.client:
-            response = self.modify_product(1, "omo", 2300)
+            self.add_product("omo", 500, 1)
+            response = self.modify_product("omo", 3000, 3)
             self.assertEqual(response.status_code, 200)
 
     def test_user_can_successfully_modify_product(self):
         "Tests user can modify product successfully"
         with self.client:
-            self.add_product("honey", 5000)
-            response = self.modify_product(1, "magic", 3200)
-            resp = self.get_a_product(1)
-            self.assertIn(
-                b'{"result": "Product successfully updated"}', 
-                response.data
+            self.add_product("honey", 5000, 1)
+            response = self.modify_product("honey", 3200, 2)
+            self.get_a_product("honey")
+            db_result = self.db_helper.get_a_product_from_db("honey")
+
+            product_name = db_result['product_name']
+            product_price = db_result['product_price']
+            product_quantity = db_result['product_quantity']
+        
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                "Product successfully updated", 
+                decoded_response['result']
             )
-            self.assertIn(
-                b'{"result": {"product_id": 1, "product_name": "magic", "product_price": 3200, "product_quantity": 1}}',
-                resp.data
+            self.assertListEqual(
+                ["honey", 3200, 2],
+                [product_name, product_price, product_quantity]
             )
     
-    def test_user_can_not_modify_product_that_doesnot_exist(self):
+    def test_user_can_not_modify_product_with_no_products_added(self):
         "Tests user can not modify a non existing product"
         with self.client:
-            self.add_product("egg", 500)
-            response = self.modify_product(2, "omo", 2300)
-            self.assertIn(
-                b'{"message": "Product with id 2 does not exist"}', 
-                response.data
+            response = self.modify_product("egg", 300, 2)
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                "No Products added yet", 
+                decoded_response['message']
             )
             
     def test_user_can_send_a_delete_request_to_products_endpoint_successfully(self):
         "Tests user can successfully send delete request"
         with self.client:
-            response = self.delete_product(1)
+            response = self.delete_product("toys")
             self.assertEqual(response.status_code, 200)
 
     def test_user_cannot_delete_product_if_no_products_are_added_yet(self):
         "Tests user can only delete product if products have been added"
         with self.client:
-            response = self.delete_product(1)
-            self.assertIn(b'{"message": "No Products added yet"}', response.data)
+            response = self.delete_product("laptop")
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                "No Products added yet", 
+                decoded_response['message']
+            )
 
     def test_user_can_delete_product_if_it_exists(self):
         "Tests user can only delete product if it exists"
         with self.client:
-            self.add_product("soda", 3000)
-            response = self.delete_product(1)
-            self.assertIn(
-                b'{"result": "Product successfully deleted"}', response.data)
+            self.add_product("soda", 3000, 1)
+            response = self.delete_product("soda")
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                "Product successfully deleted", 
+                decoded_response['result']
+            )
 
     def test_user_cannot_delete_product_which_does_not_exist(self):
         "Tests user can only delete product if it exists"
         with self.client:
-            self.add_product("soda", 3000)
-            response = self.delete_product(2)
+            self.add_product("soda", 3000, 1)
+            response = self.delete_product("watches")
+            decoded_response = json.loads(response.data.decode())
             self.assertIn(
-                b'{"message": "Product with id 2 does not exist"}', response.data)
+                "Product with name watches does not exist", 
+                decoded_response['message']
+            )

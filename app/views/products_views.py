@@ -15,7 +15,7 @@ class SingleProductEndPoint(Resource):
         return response
     
     def put(self, product_name):
-        "modifies product with given product_id"
+        "modifies product with given product_name"
         parser = reqparse.RequestParser()
         parser.add_argument(
             'product_name',

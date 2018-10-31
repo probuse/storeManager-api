@@ -120,7 +120,7 @@ class DBHelper:
         return self.cur.fetchone()
 
     def modify_a_product_in_db(self, product):
-        "modifies a product with product_id"
+        "modifies a product with product_name"
         sql = """UPDATE products 
                 SET product_price=%s, product_quantity=%s
                 WHERE product_name=%s

@@ -15,7 +15,7 @@ api = Api(app)
 # Endpoints to url mapping
 api.add_resource(HomeEndPoint, '/')
 api.add_resource(ProductEndPoint, '/api/v1/products')
-api.add_resource(SingleProductEndPoint, '/api/v1/products/<product_id>')
+api.add_resource(SingleProductEndPoint, '/api/v1/products/<product_name>')
 api.add_resource(SaleEndPoint, '/api/v1/sales')
 api.add_resource(SingleSaleEndPoint, '/api/v1/sales/<sale_id>')
 api.add_resource(SignupEndpoint, '/api/v1/auth/signup')

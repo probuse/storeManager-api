@@ -31,7 +31,7 @@ class DBHelper:
                     user_id SERIAL PRIMARY KEY,
                     usernames VARCHAR,
                     email VARCHAR NOT NULL UNIQUE,
-                    phone_number VARCHAR,
+                    phone_number VARCHAR NOT NULL,
                     is_admin BOOl NOT NULL,
                     password VARCHAR NOT NULL   
                 )
@@ -55,7 +55,8 @@ class DBHelper:
                     sale_id SERIAL PRIMARY KEY,
                     products_sold INTEGER NOT NULL,
                     seller_id INTEGER NOT NULL,
-                    product_id INTEGER NOT NULL,
+                    product_name VARCHAR NOT NULL,
+                    total_amount INTEGER NOT NULL,
                     sale_date VARCHAR NOT NULL
                 )
                 """
@@ -147,8 +148,8 @@ class DBHelper:
     def add_sale_to_db(self, sale):
         "adds sale to database"
         sql = """INSERT INTO sales
-                (product_name, products_sold, seller_id, sale_date)
-                VALUES (%s, %s, %s, %s)
+                (product_name, products_sold, seller_id, total_amount, sale_date)
+                VALUES (%s, %s, %s, %s, %s)
                 """
         self.cur.execute(
             sql,
@@ -156,6 +157,7 @@ class DBHelper:
                 sale.product_name,
                 sale.products_sold,
                 sale.seller_id,
+                sale.total_amount,
                 sale.sale_date
             )
         )
@@ -171,6 +173,11 @@ class DBHelper:
         sql = "SELECT * FROM sales WHERE sale_id = %s"
         self.cur.execute(sql,[sale_id])
         return self.cur.fetchone()
+
+    def delete_all_sales_from_db(self):
+        "deletes all sales"
+        sql = "DELETE FROM sales"
+        self.cur.execute(sql)
 
     def drop_table(self):
         "drop database tables"

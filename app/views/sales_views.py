@@ -26,7 +26,7 @@ class SaleEndPoint(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument(
             'product_name', 
-            type=int, 
+            type=str, 
             required=True,
             help="Product_name can not be empty" 
         )

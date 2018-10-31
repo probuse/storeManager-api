@@ -1,15 +1,19 @@
 """
     Contains tests for the Sale class
 """
+import json
 from unittest import TestCase
-from app.models.sale import Sale
+from app import app
+from db_helper import DBHelper
 from app.models.product import Product
+from app.models.sale import Sale
 
 class SaleTestCase(TestCase):
     "TestCase for the Sale class"
 
     def setUp(self):
         "initialize variables"
+        self.db_helper = DBHelper(app.config['DATABASE_URL'])
         self.sale_obj = Sale(
             product_name = "omo", 
             products_sold = 2, 
@@ -17,13 +21,14 @@ class SaleTestCase(TestCase):
         )
         self.product_obj = Product()
         self.product_data = dict(
-            product_name="pk", product_price=300, product_quantity=1
+            product_name="pk", product_price=300, product_quantity=10
         )
-
+    
     def tearDown(self):
         "release resources"
-        Sale.sales[:] = []
-        Sale.products[:] = []
+        self.db_helper.delete_all_products()
+        self.db_helper.delete_all_sales_from_db()
+
 
     def test_sale_object_created_successfully(self):
         "Test sale project creation was successful"
@@ -70,7 +75,7 @@ class SaleTestCase(TestCase):
         response = self.sale_obj.get_sale(1)
         self.assertIn('No Sales made yet', response['message'])
 
-    def test_empty_product_id(self):
+    def test_empty_product_name(self):
         "Tests if empty product_name is entered"
         self.product_obj.add_product(**self.product_data)
         response = self.sale_obj.add_sale(
@@ -94,13 +99,13 @@ class SaleTestCase(TestCase):
         self.assertEqual(
             {'seller_id': 'Seller id is not a number'}, response)
 
-    # def test_product_id_cannot_be_zero(self):
-    #     "Tests if product_id is zero"
-    #     self.product_obj.add_product(**self.product_data)
-    #     response = self.sale_obj.add_sale(
-    #         product_id=" ", products_sold=1, seller_id=4)
-    #     self.assertEqual(
-    #         {'product_name': 'Product name is not a valid string'}, response)
+    def test_product_name_cannot_be_integer(self):
+        "Tests if product_name can not Integer"
+        self.product_obj.add_product(**self.product_data)
+        response = self.sale_obj.add_sale(
+            product_name=23, products_sold=1, seller_id=4)
+        self.assertEqual(
+            {'product_name': 'Product name is not a valid string'}, response)
 
     def test_products_sold_cannot_be_zero(self):
         "Tests if products_sold is zero"
@@ -145,3 +150,24 @@ class SaleTestCase(TestCase):
             }
             , response
         )
+
+    def test_product_quantity_is_modified_once_sale_is_made(self):
+        "Tests is product quantity changes after sale is made"
+        self.product_obj.add_product(**self.product_data)
+        self.sale_obj.add_sale(product_name='pk', products_sold=5, seller_id=2)
+        result = self.db_helper.get_a_product_from_db('pk')
+        self.assertEqual(
+            5
+            ,result['product_quantity']
+        )
+
+    def test_total_amount_after_sale(self):
+        "Tests total amount after sale is made"
+        self.product_obj.add_product(**self.product_data)
+        self.sale_obj.add_sale(product_name='pk', products_sold=5, seller_id=2)
+        result = self.db_helper.get_sales_from_db()
+        self.assertEqual(
+            1500
+            ,result[0]['total_amount']
+        )
+        

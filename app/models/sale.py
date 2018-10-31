@@ -15,6 +15,7 @@ class Sale:
         self._product_name = kwargs.get("product_name", None)
         self._products_sold = kwargs.get("products_sold", None)
         self._seller_id = kwargs.get("seller_id", None)
+        self.total_amount = kwargs.get("total_amount", 0)
         self.sale_date = str(datetime.now().date())
 
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
@@ -61,34 +62,61 @@ class Sale:
 
     def add_sale(self, **data):
         "Adds a sale"
-        products = self.db_helper.get_products_from_db()
-
         valid, errors = self.validate_sale(**data)
         product_name = data['product_name']
         products_sold = data['products_sold']
         seller_id = data['seller_id']
         sale_date = str(datetime.now().date())
+        product_quantity = 0
+
 
         if valid:
+            products = self.db_helper.get_products_from_db()
+            product = self.db_helper.get_a_product_from_db(product_name)
+            if product:
+                product_quantity = product['product_quantity']
+            else:
+                return {
+                    'message': 'Product with Product name {} does not exist'.format(product_name)
+                }
+
+            if product_quantity < products_sold:
+                return {
+                    'message': 'Sale not possible Product {} has {} product(s) left'.format(
+                        product_name, product_quantity
+                    )
+                }
+        
             if products:
                 for product in products:
-                    if product['product_name'] == int(product_name):
+                    if product['product_name'] == product_name:
+                        total_amount = products_sold * product['product_price']
                         sale = Sale(
                             product_name=product_name,
                             products_sold=products_sold, 
                             seller_id=seller_id,
+                            total_amount=total_amount,
                             sale_date=sale_date
                         )
+                        current_stock = product_quantity - products_sold
+                        updated_product = Product(
+                            product_id = product['product_id'],
+                            product_name = product['product_name'],
+                            product_quantity = current_stock,
+                            product_price = product['product_price']
+                        )
+
                         self.db_helper.add_sale_to_db(sale)
+                        self.db_helper.modify_a_product_in_db(updated_product)
 
                         return {
                             'message': '{} {}(s) successfully sold'.format(
                                     products_sold, 
                                     product['product_name']
                                 )
-                        }
+                        }, 201
             return {
-                'message': 'Product with Product name {} does not exist'.format(product_name)
+                'message': 'No Products added yet'
                 }
         return errors
 
@@ -101,8 +129,9 @@ class Sale:
             if sale:
                 response_data = dict(
                         sale_id=sale['sale_id'],
-                        product_id=sale['product_id'],
+                        product_name=sale['product_name'],
                         products_sold=sale['products_sold'],
+                        total_amount=sale['total_amount'],
                         sale_date=sale['sale_date']
                     )
                 return response_data
@@ -118,8 +147,9 @@ class Sale:
             for sale in sales:
                 data = dict(
                     sale_id = sale['sale_id'],
-                    product_id = sale['product_id'],
+                    product_name = sale['product_name'],
                     products_sold = sale['products_sold'],
+                    total_amount=sale['total_amount'],
                     sale_date = sale['sale_date']
                 )
                 response_data.append(data)

@@ -9,7 +9,7 @@ from app.models.product import Product
 from app.business_logic.product_service import ProductService
 
 product_obj = Product()
-product_service = ProductService()
+# product_service = ProductService()
 
 class SingleProductEndPoint(Resource):
     "Returns a single product"

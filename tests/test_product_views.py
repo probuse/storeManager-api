@@ -140,7 +140,7 @@ class ProductTestCase(BaseTestCase):
             token =  decoded_login_resp['token']
 
             response = self.get_a_product(1, token)
-            self.assertEqual(response.status_code, 200)
+            self.assertEqual(response.status_code, 404)
 
     def test_get_products_returns_no_product_if_product_name_doesnot_exist_for_admin(self):
         "Test product endpoint returns Product does not exists"

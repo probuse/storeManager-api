@@ -16,7 +16,7 @@ class SingleProductEndPoint(Resource):
     @jwt_required
     def get(self, product_id):
         'Returns a single product with id of product_id'
-        return product_service.get_product(product_id)
+        return product_obj.get_product(product_id)
         
     @jwt_required
     def put(self, product_id):

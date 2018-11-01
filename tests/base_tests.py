@@ -78,11 +78,19 @@ class BaseTestCase(TestCase):
             content_type='application/json'
         )
 
-    def delete_product(self, product_name):
+    def delete_product(self, product_id, token=None):
         "allows user to delete a product"
+        if token:
+            return self.client.delete(
+                '/api/v1/products/{}'.format(product_id),
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
+            )
         return self.client.delete(
-            '/api/v1/products/{}'.format(product_name),
-        )
+                '/api/v1/products/{}'.format(product_id)
+            )
 
     def register_store_attendant(self, **data):
         "allows admin to add a store attendant"

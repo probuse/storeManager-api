@@ -70,7 +70,7 @@ class LoginTestCase(BaseTestCase):
                 **self.store_attendant_valid_login_data)
             resp = json.loads(response.data)
             self.assertIn(
-                "You are a registered store attendant",
+                "Logged in successfully as store attendant",
                resp['message'])
 
     def test_store_attendant_invalid_login_credentials_returns_401(self):
@@ -111,7 +111,7 @@ class LoginTestCase(BaseTestCase):
                 **self.admin_valid_login_data)
             resp = json.loads(response.data)
             self.assertIn(
-                "we are logging you in as admin", 
+                'Logged in successfully as admin', 
                 resp['message'])
 
     def test_admin_user_log_in_with_invalid_credentials_returns_404(self):

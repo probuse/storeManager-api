@@ -82,7 +82,7 @@ class User:
             if attendant['email'] == email and attendant['password'] == password:
                 admin = dict(
                     email=email,
-                    is_admin=attendant.is_admin
+                    is_admin=attendant['is_admin']
                 )
                 access_token = create_access_token(identity=admin)
                 return {'message': 'Logged in successfully as store attendant', 'token': access_token}, 200

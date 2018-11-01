@@ -5,6 +5,7 @@ import json
 from app import app
 from db_helper import DBHelper
 from tests.base_tests import BaseTestCase
+from app.models.user import User
 
 class ProductTestCase(BaseTestCase):
     "TestCase to test ProductEndPoint"
@@ -16,6 +17,22 @@ class ProductTestCase(BaseTestCase):
         self.db_helper.create_users_table()
         self.db_helper.create_products_table()
         self.db_helper.create_sales_table()
+
+        self.admin_login_data = User(
+            email='admin@gmail.com',
+            password='admin',
+            is_admin=True
+        )
+
+        self.store_attendant_reg_data = dict(
+            usernames="etwin himself",
+            email="etwin@himself.com",
+            phone_number="704800666",
+            password="etwin"
+        )
+
+        self.admin_data = ('admin@gmail.com', 'admin', True)
+        self.store_attendant_data = ('etwin@himself.com', 'etwin', False)
 
     def tearDown(self):
         "drop database"
@@ -109,7 +126,11 @@ class ProductTestCase(BaseTestCase):
     def test_user_cannot_delete_product_if_no_products_are_added_yet(self):
         "Tests user can only delete product if products have been added"
         with self.client:
-            response = self.delete_product(1)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+                        
+            response = self.delete_product(1, token)
             decoded_response = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertEqual(
@@ -117,22 +138,64 @@ class ProductTestCase(BaseTestCase):
                 decoded_response['message']
             )
 
-    def test_user_can_delete_product_if_it_exists(self):
-        "Tests user can only delete product if it exists"
+    def test_user_can_not_delete_with_no_authorization_header(self):
+        "Tests user can only delete product if they are autenticated"
         with self.client:
             self.add_product("soda", 3000, 1)
             response = self.delete_product(1)
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                'Missing Authorization Header', 
+                decoded_response['msg']
+            )
+
+    def test_admin_user_can_delete_product_if_it_exists(self):
+        "Tests admin can delete product"
+        with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+            self.add_product("soda", 3000, 1)
+            response = self.delete_product(1, token)
             decoded_response = json.loads(response.data.decode())
             self.assertEqual(
                 "Product successfully deleted", 
                 decoded_response['result']
             )
 
-    def test_user_cannot_delete_product_which_does_not_exist(self):
+    def test_store_attendant_user_can_not_delete_product(self):
+        "Tests store attendant user can not delete product"
+        with self.client:
+            reg_response = self.register_store_attendant(
+                **self.store_attendant_reg_data
+            )
+            decoded_reg_response = json.loads(reg_response.data.decode())
+
+            login_resp = self.login_store_attendant_user(
+                *self.store_attendant_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("soda", 3000, 1)
+            response = self.delete_product(1, token)
+            decoded_response = json.loads(response.data.decode())
+            self.assertEqual(
+                "Store Attendant successfully added",
+                decoded_reg_response['message']
+            )
+            self.assertEqual(
+                "Only admin can delete a product", 
+                decoded_response['message']
+            )
+
+    def test_admin_cannot_delete_product_which_does_not_exist(self):
         "Tests user can only delete product if it exists"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
             self.add_product("soda", 3000, 1)
-            response = self.delete_product(3)
+            response = self.delete_product(3, token)
             decoded_response = json.loads(response.data.decode())
             self.assertIn(
                 "Product with id 3 does not exist", 

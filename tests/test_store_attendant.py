@@ -12,6 +12,9 @@ class StoreAttendantTestCase(TestCase):
     def setUp(self):
         "Initialize variables"
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
 
         self.store_attendant_obj = User(
             usernames = "etwin himself",
@@ -27,13 +30,13 @@ class StoreAttendantTestCase(TestCase):
             password="12345678"
         )
 
-        self.db_helper.delete_store_attendant_user(
-            self.store_attendant_data['email']
-        )
+        # self.db_helper.delete_store_attendant_user(
+        #     self.store_attendant_data['email']
+        # )
 
     def tearDown(self):
-        "relese resources"
-        User.store_attendants[:] = []
+        "drop database"
+        self.db_helper.drop_database()
     
     def test_store_attendant_object_created_successfully(self):
         "Tests if store attendant object is created"

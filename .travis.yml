@@ -7,6 +7,7 @@ python:
 env:
   global:
     - CODECOV_TOKEN="700cabb1-b67f-4f44-93e5-f5f01ea3761d"
+    - export CONFIG_CLASS="testing"
 
 install:
   - pip install -r requirements.txt
@@ -18,7 +19,7 @@ services:
   - postgresql
 
 before_script:
-  - psql -c 'CREATE DATABASE storemanager;' -U postgres
+  - psql -c 'CREATE DATABASE test_storemanager;' -U postgres
 
 after_success:
   - coveralls

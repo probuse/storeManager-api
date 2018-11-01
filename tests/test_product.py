@@ -13,6 +13,9 @@ class ProductTestCase(TestCase):
     def setUp(self):
         "Initialize variables"
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
 
         self.product = Product(
             product_name = "Sugar", 
@@ -23,14 +26,11 @@ class ProductTestCase(TestCase):
         self.product_data = dict(
             product_name="pk", product_price=300, product_quantity=1)
 
-        self.db_helper.delete_a_product_from_db(
-            self.product_data['product_name']
-        )
         self.num_products = len(self.db_helper.get_products_from_db())
 
     def tearDown(self):
-        "clear data"
-        Product.products[:] = []
+        "drop database"
+        self.db_helper.drop_database()
 
     def test_one_product_object_created_successfully(self):
         "Tests if one product can be added"
@@ -134,19 +134,18 @@ class ProductTestCase(TestCase):
 
     def test_get_product_returns_no_product_with_no_product_added(self):
         "Tests if get_product returns no product"
-        self.db_helper.delete_all_products()
-        result = self.product_obj.get_product('soda')
+        result = self.product_obj.get_product(1)
         self.assertEqual(
             'No Products added yet',
             result['message']
         )
 
-    def test_get_product_returns_message_when_product_name_does_not_exist(self):
+    def test_get_product_returns_message_when_product_id_does_not_exist(self):
         "Tests if get_product returns no product"
         self.product_obj.add_product(**self.product_data)
-        result = self.product_obj.get_product("ovacado")
+        result = self.product_obj.get_product(2)
         self.assertEqual(
-            'Product with name ovacado does not exist',
+            'Product with id 2 does not exist',
             result['message']
         )
 
@@ -155,7 +154,7 @@ class ProductTestCase(TestCase):
         self.product_obj.add_product(**self.product_data)
         self.product_obj.add_product(
             product_name='candle', product_price=100, product_quantity=1)
-        result =  self.product_obj.get_product('candle')
+        result =  self.product_obj.get_product(2)
         product_name = result['result']['product_name']
         product_price = result['result']['product_price']
         product_quantity = result['result']['product_quantity']
@@ -189,14 +188,14 @@ class ProductTestCase(TestCase):
             }, result)
 
     def test_user_cannot_modify_product_if_no_products_exist(self):
-        "Tests user can only modify existing products"
+        "Tests user can only modify when products exist"
         result = self.product_obj.modify_product(
-            product_name="Sugar",
+            product_id=1,
             product_price=3200,
             product_quantity=1
         )
         self.assertEqual(
-            'Product with name Sugar does not exist',
+            'No Products added yet',
             result['message']
         )
 
@@ -205,33 +204,32 @@ class ProductTestCase(TestCase):
         self.product_obj.add_product(**self.product_data)
         result = self.product_obj.modify_product(
             product_id=2,
-            product_name="magic",
             product_price=3200,
             product_quantity = 1
         )
         self.assertEqual(
-            {'message': 'Product with name magic does not exist'},
-            result
+            'Product with id 2 does not exist',
+            result['message']
         )
 
     def test_user_can_modify_product_successfully(self):
         "Tests user can modify product successfully"
         self.product_obj.add_product(**self.product_data)
         result = self.product_obj.modify_product(
-            product_name="pk",
+            product_id=1,
             product_price=1000,
             product_quantity=1
         )
         self.assertEqual(
-            {'result': 'Product successfully updated'},
-            result
+            'Product successfully updated',
+            result['result']
         )   
 
     def test_user_cannot_delete_product_if_no_products_exist(self):
         "Tests user can only delete existing products"
-        result = self.product_obj.delete_product("soda")
+        result = self.product_obj.delete_product(1)
         self.assertEqual(
-            'Product with name soda does not exist',
+            'No Products added yet',
             result['message']
         )
 
@@ -240,9 +238,9 @@ class ProductTestCase(TestCase):
         self.product_obj.add_product(**self.product_data)
         self.product_obj.add_product(
             product_name="omo", product_price=2300, product_quantity=1)
-        self.product_obj.delete_product("omo")
-        response = self.product_obj.get_product("omo")
+        self.product_obj.delete_product(2)
+        response = self.product_obj.get_product(2)
         self.assertEqual(
-            'Product with name omo does not exist', 
+            'Product with id 2 does not exist', 
             response['message']
             )

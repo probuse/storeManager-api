@@ -6,10 +6,8 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from flask_restful import Resource, Api, reqparse
 from app.models.product import Product
-from app.business_logic.product_service import ProductService
 
 product_obj = Product()
-# product_service = ProductService()
 
 class SingleProductEndPoint(Resource):
     "Returns a single product"

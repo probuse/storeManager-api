@@ -18,6 +18,16 @@ class SaleTestCase(BaseTestCase):
         self.db_helper.create_products_table()
         self.db_helper.create_sales_table()
 
+        self.store_attendant_reg_data = dict(
+            usernames="etwin himself",
+            email="etwin@himself.com",
+            phone_number="704800666",
+            password="etwin"
+        )
+
+        self.admin_data = ('admin@gmail.com', 'admin', True)
+        self.store_attendant_data = ('etwin@himself.com', 'etwin', False)
+
     def tearDown(self):
         "drop database"
         self.db_helper.drop_database()
@@ -25,21 +35,33 @@ class SaleTestCase(BaseTestCase):
     def test_add_sale_returns_201_status_code(self):
         "Test adding sale returns 201 status code"
         with self.client:
-            self.add_product("egg", 500, 10)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 10, token)
             response = self.add_sale("egg", 5, 1)
             self.assertEqual(response.status_code, 201)
 
     def test_add_sale_returns_message_to_user(self):
         "Test adding sale returns information of added sale"
         with self.client:
-            self.add_product("egg", 500, 3)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 3, token)
             sale_response = self.add_sale("egg", 2, 1)
             self.assertIn(b'2 egg(s) successfully sold', sale_response.data)
 
     def test_add_sale_if_product_name_doesnot_exist(self):
         "Test adding sale with invalid product_name"
         with self.client:
-            self.add_product("egg", 500, 1)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 1, token)
             sale_response = self.add_sale("bread", 2, 1)
             self.assertIn(b'Product with Product name bread does not exist', sale_response.data)
 
@@ -55,46 +77,76 @@ class SaleTestCase(BaseTestCase):
             response = self.get_sales()
             self.assertIn(b'No Sales made yet', response.data)
 
-    def test_get_sales_when_sales_have_been_made(self):
+    def test_get_sales_when_sales_have_been_made_for_admin(self):
         "Test request to /sales returns a message to user with sales"
         with self.client:
-            self.add_product("egg", 500, 3)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 3, token)
             self.add_sale("egg", 2, 1)
             result = self.db_helper.get_sales_from_db()
             self.assertEqual(1, len(result))
 
-    def test_get_a_sale_returns_200_status_code(self):
-        "Test /sales/<sale_id> endpoint responds with a 200 status code"
+    def test_get_sales_when_sales_have_been_made_for_store_attendant(self):
+        "Test request to /sales returns a message to user with sales"
         with self.client:
-            self.add_product("egg", 500, 1)
-            self.add_sale(1, 2, 1)
-            response = self.get_a_sale(1)
-            self.assertEqual(response.status_code, 200)
+            self.register_store_attendant(
+                **self.store_attendant_reg_data
+            )
 
-    def test_get_a_sale_wheb_sale_does_not_exist(self):
+            login_resp = self.login_store_attendant_user(
+                *self.store_attendant_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            attendant_token =  decoded_login_resp['token']
+
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 3, admin_token)
+            self.add_sale("egg", 2, 1)
+            result = self.db_helper.get_sales_from_db()
+            self.assertEqual(1, len(result))
+
+    def test_get_a_sale_when_sale_does_not_exist_for_admin(self):
         "Tests response from get_a_sale with no sales made"
         with self.client:
-            self.add_product("egg", 500, 1)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 1, token)
             response = self.get_a_sale(1)
             decoded_response = json.loads(response.data.decode())
             self.assertEqual(
               'No Sales made yet',
                decoded_response['message']
             )
+
     def test_get_a_sale_returns_sale(self):
         "Tests if get_a_sale returns when a sale is added"
         with self.client:
-            self.add_product("egg", 500, 1)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 1, token)
             response = self.add_sale("egg", 2, 1)
             decoded_response = json.loads(response.data.decode())
             self.assertEqual(
                 'Sale not possible Product egg has 1 product(s) left', 
                 decoded_response['message'])
 
-    def test_get_a_sale_returns_sale_does_not_exist(self):
+    def test_get_a_sale_returns_sale_does_not_exist_for_admin(self):
         "Tests if get_a_sale returns when a sale is added"
         with self.client:
-            self.add_product("egg", 500, 1)
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
+            self.add_product("egg", 500, 1, token)
             response = self.add_sale('pk', 2, 1)
             decoded_response = json.loads(response.data.decode())
             self.assertEqual(

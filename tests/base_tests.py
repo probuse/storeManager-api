@@ -21,27 +21,52 @@ class BaseTestCase(TestCase):
         "get request to home view"
         return self.client.get('/')
 
-    def add_product(self, product_name, product_price, product_quantity):
+    def add_product(self, product_name, product_price, product_quantity, token):
         "allows user to add a product"
-        return self.client.post(
-            '/api/v1/products',
-            data = json.dumps(dict(
-                product_name=product_name,
-                product_price=product_price,
-                product_quantity=product_quantity
+        if token:
+            return self.client.post(
+                '/api/v1/products',
+                data = json.dumps(dict(
+                    product_name=product_name,
+                    product_price=product_price,
+                    product_quantity=product_quantity
+                )
+            ),
+                headers={
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                }
             )
-        ),
-            content_type='application/json'
+        return self.client.post(
+                '/api/v1/products',
+                data = json.dumps(dict(
+                    product_name=product_name,
+                    product_price=product_price,
+                    product_quantity=product_quantity
+                )
+            ),
         )
 
 
-    def get_products(self):
+    def get_products(self, token):
         "return all available products"
-        return self.client.get('/api/v1/products')
+        return self.client.get(
+            '/api/v1/products',
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        )
 
-    def get_a_product(self, product_id):
+    def get_a_product(self, product_id, token):
         "returns a single product"
-        return self.client.get('/api/v1/products/{}'.format(product_id))
+        return self.client.get(
+            '/api/v1/products/{}'.format(product_id),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        )
 
     def add_sale(self, product_name, products_sold, seller_id):
         "allows user to add a sale"
@@ -65,7 +90,7 @@ class BaseTestCase(TestCase):
         "returns a single sale"
         return self.client.get('/api/v1/sales/{}'.format(sale_id))
 
-    def modify_product(self, product_id, product_price, product_quantity):
+    def modify_product(self, product_id, product_price, product_quantity, token):
         "allows user to modiy a product"
         return self.client.put(
             '/api/v1/products/{}'.format(product_id),
@@ -75,7 +100,10 @@ class BaseTestCase(TestCase):
                 product_quantity=product_quantity
             )
             ),
-            content_type='application/json'
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
         )
 
     def delete_product(self, product_id, token=None):

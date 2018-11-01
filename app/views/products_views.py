@@ -6,16 +6,19 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from flask_restful import Resource, Api, reqparse
 from app.models.product import Product
+from app.business_logic.product_service import ProductService
 
 product_obj = Product()
+product_service = ProductService()
 
 class SingleProductEndPoint(Resource):
     "Returns a single product"
+    @jwt_required
     def get(self, product_id):
         'Returns a single product with id of product_id'
-        response = product_obj.get_product(product_id)
-        return response
-    
+        return product_service.get_product(product_id)
+        
+    @jwt_required
     def put(self, product_id):
         "modifies product with given product_id"
         parser = reqparse.RequestParser()
@@ -32,8 +35,14 @@ class SingleProductEndPoint(Resource):
             required=True,
             help="Product quantity can not be empty"
         )
+
         args = parser.parse_args()
-        return product_obj.modify_product(product_id, **args)
+        current_user = get_jwt_identity()
+        is_admin= current_user['is_admin']
+
+        if is_admin:
+            return product_obj.modify_product(product_id, **args)
+        return {'message': 'Only admin can update a product'}
 
     @jwt_required
     def delete(self, product_id):
@@ -46,11 +55,13 @@ class SingleProductEndPoint(Resource):
 
 class ProductEndPoint(Resource):
     "Handles all requests to /products endpoint"
+    @jwt_required
     def get(self):
         'Handles all get requests to /products endpoint'
         response = product_obj.get_all_products()
         return response
 
+    @jwt_required
     def post(self):
         'Handles all post requests to /products endpoint'
         parser = reqparse.RequestParser()
@@ -73,6 +84,8 @@ class ProductEndPoint(Resource):
             help="Product quantity can not be empty"
         )
         args = parser.parse_args()
-        response = product_obj.add_product(**args)
-
-        return response
+        current_user = get_jwt_identity()
+        is_admin = current_user['is_admin']
+        if is_admin:
+            return product_obj.add_product(**args)
+        return {'message': 'Only admin can add a product'}, 403

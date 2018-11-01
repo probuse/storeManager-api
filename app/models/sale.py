@@ -7,8 +7,6 @@ from datetime import datetime
 from app.models.product import Product
 class Sale:
 
-    sales = []
-    products = Product.products
 
     def __init__(self, **kwargs):
         self._sale_id = None

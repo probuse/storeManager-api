@@ -5,7 +5,6 @@ from app import app
 from db_helper import DBHelper
 class Product:
     "Class for creating all objects in store"
-    products = []
 
     def __init__(self, **kwargs):
         "Product takes in product_name and product_price"
@@ -62,8 +61,7 @@ class Product:
         product_name = data['product_name']
         product_price = data['product_price']
         product_quantity = data['product_quantity']
-
-
+        
         product = Product(
             product_name=product_name,
             product_price=product_price,
@@ -81,7 +79,6 @@ class Product:
 
     def get_all_products(self):
         "returns a list of all products"
-        response_data = []
         products = self.db_helper.get_products_from_db()
         if products:
             return {'result': products} 
@@ -97,8 +94,8 @@ class Product:
                 return {'result': product}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
-            }
-        return {'message': 'No Products added yet'}
+            }, 404
+        return {'message': 'No Products added yet'}, 404
 
     def modify_product(self, product_id, **data):
         "updates product"

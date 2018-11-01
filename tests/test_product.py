@@ -137,7 +137,7 @@ class ProductTestCase(TestCase):
         result = self.product_obj.get_product(1)
         self.assertEqual(
             'No Products added yet',
-            result['message']
+            result[0]['message']
         )
 
     def test_get_product_returns_message_when_product_id_does_not_exist(self):
@@ -146,7 +146,7 @@ class ProductTestCase(TestCase):
         result = self.product_obj.get_product(2)
         self.assertEqual(
             'Product with id 2 does not exist',
-            result['message']
+            result[0]['message']
         )
 
     def test_get_product_returns_result_information_about_added_product(self):
@@ -242,5 +242,5 @@ class ProductTestCase(TestCase):
         response = self.product_obj.get_product(2)
         self.assertEqual(
             'Product with id 2 does not exist', 
-            response['message']
+            response[0]['message']
             )

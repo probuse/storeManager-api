@@ -84,16 +84,7 @@ class Product:
         response_data = []
         products = self.db_helper.get_products_from_db()
         if products:
-            for product in products:
-                data = dict(
-                    product_id = product['product_id'],
-                    product_name = product['product_name'],
-                    product_price = product['product_price'],
-                    product_quantity = product['product_quantity']
-                )
-                response_data.append(data)
-            return {'result': response_data}
-                
+            return {'result': products} 
         return {'message': 'No Products added yet'}
 
     def get_product(self, product_id):
@@ -103,13 +94,7 @@ class Product:
 
         if products:
             if product:
-                response_data = dict(
-                        product_id=product['product_id'],
-                        product_name=product['product_name'],
-                        product_price=product['product_price'],
-                        product_quantity=product['product_quantity']
-                    )
-                return {'result': response_data}
+                return {'result': product}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)
             }

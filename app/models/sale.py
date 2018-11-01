@@ -128,14 +128,7 @@ class Sale:
 
         if sales:
             if sale:
-                response_data = dict(
-                        sale_id=sale['sale_id'],
-                        product_name=sale['product_name'],
-                        products_sold=sale['products_sold'],
-                        total_amount=sale['total_amount'],
-                        sale_date=sale['sale_date']
-                    )
-                return response_data
+                return sale
             return {'message': 'Sale with id {} does not exist'.format(sale_id)}
         return {'message': 'No Sales made yet'}
     
@@ -143,18 +136,8 @@ class Sale:
         "returns all sales"
         sales = self.db_helper.get_sales_from_db()
 
-        response_data = []
         if sales:
-            for sale in sales:
-                data = dict(
-                    sale_id = sale['sale_id'],
-                    product_name = sale['product_name'],
-                    products_sold = sale['products_sold'],
-                    total_amount=sale['total_amount'],
-                    sale_date = sale['sale_date']
-                )
-                response_data.append(data)
-            return response_data
+            return sales
         return {'message': 'No Sales made yet'}
 
     def validate_sale(self, **data):

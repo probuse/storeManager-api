@@ -5,7 +5,7 @@ class Config(object):
     DEBUG = False
     CSRF_ENABLED = True
     SECRET = os.getenv('SECRET')
-    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/storemanager_np'
+    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/storemanager'
 
 
 class DevelopmentConfig(Config):

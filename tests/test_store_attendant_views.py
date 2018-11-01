@@ -12,8 +12,10 @@ class StoreAttendantTestCase(BaseTestCase):
     def setUp(self):
         "Initialize variables"
         super(StoreAttendantTestCase, self).setUp()
-
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
 
         self.store_attendant_data = dict(
             usernames="etwin himself",
@@ -21,10 +23,10 @@ class StoreAttendantTestCase(BaseTestCase):
             phone_number=704800666,
             password="12345678"
         )
-
-        self.db_helper.delete_store_attendant_user(
-            self.store_attendant_data['email']
-        )
+    
+    def tearDown(self):
+        "drop database"
+        self.db_helper.drop_database()
 
     def test_post_to_store_attendant_returns_201_status_code(self):
         "Tests if post request to store attendant returns 201"

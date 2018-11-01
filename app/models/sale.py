@@ -69,17 +69,25 @@ class Sale:
         sale_date = str(datetime.now().date())
         product_quantity = 0
 
-
         if valid:
+            product_dict = self.db_helper.get_product_by_name(product_name)
             products = self.db_helper.get_products_from_db()
-            product = self.db_helper.get_a_product_from_db(product_name)
-            if product:
+
+            if product_dict:
+                product_id = product_dict['product_id']
+                product = self.db_helper.get_a_product_from_db(product_id)
                 product_quantity = product['product_quantity']
+            # else:
+            #     return {
+            #         'message': 'Product with Product name {} does not exist'.format(product_name)
+            #     }
+            # if product:
+            #     product_quantity = product['product_quantity']
             else:
                 return {
                     'message': 'Product with Product name {} does not exist'.format(product_name)
                 }
-
+            
             if product_quantity < products_sold:
                 return {
                     'message': 'Sale not possible Product {} has {} product(s) left'.format(
@@ -100,12 +108,11 @@ class Sale:
                         )
                         current_stock = product_quantity - products_sold
                         updated_product = Product(
-                            product_id = product['product_id'],
                             product_name = product['product_name'],
                             product_quantity = current_stock,
                             product_price = product['product_price']
                         )
-
+                        updated_product.product_id = product_id
                         self.db_helper.add_sale_to_db(sale)
                         self.db_helper.modify_a_product_in_db(updated_product)
 

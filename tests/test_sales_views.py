@@ -14,9 +14,13 @@ class SaleTestCase(BaseTestCase):
         "Initialize variables"
         super(SaleTestCase, self).setUp()
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
 
-        self.db_helper.delete_all_products()
-        self.db_helper.delete_all_sales_from_db()
+    def tearDown(self):
+        "drop database"
+        self.db_helper.drop_database()
 
     def test_add_sale_returns_201_status_code(self):
         "Test adding sale returns 201 status code"

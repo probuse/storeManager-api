@@ -96,10 +96,10 @@ class Product:
                 
         return {'message': 'No Products added yet'}
 
-    def get_product(self, product_name):
+    def get_product(self, product_id):
         "returns product whose id is product_id"
         products = self.db_helper.get_products_from_db()
-        product = self.db_helper.get_a_product_from_db(product_name)
+        product = self.db_helper.get_a_product_from_db(product_id)
 
         if products:
             if product:
@@ -111,44 +111,43 @@ class Product:
                     )
                 return {'result': response_data}
             return {
-                'message': 'Product with name {} does not exist'.format(product_name)
+                'message': 'Product with id {} does not exist'.format(product_id)
             }
         return {'message': 'No Products added yet'}
 
-    def modify_product(self, **data):
+    def modify_product(self, product_id, **data):
         "updates product"
-        product_name = data.get('product_name')
         product_price = data.get('product_price')
         product_quantity = data.get('product_quantity')
 
         products = self.db_helper.get_products_from_db()
-        product = self.db_helper.get_a_product_from_db(product_name)
-
-        product_obj = Product(
-            product_name=product_name,
-            product_price=product_price,
-            product_quantity=product_quantity
-        ) 
+        product = self.db_helper.get_a_product_from_db(product_id)
 
         if products:
             if product:
+                product_obj = Product(
+                    product_price=product_price,
+                    product_quantity=product_quantity
+                ) 
+                product_obj.product_id = product_id
                 self.db_helper.modify_a_product_in_db(product_obj)
+
                 return {'result': 'Product successfully updated'}
             return {
-                'message': 'Product with name {} does not exist'.format(product_name)
+                'message': 'Product with id {} does not exist'.format(product_id)
             }
         return {'message': 'No Products added yet'}
 
-    def delete_product(self, product_name):
+    def delete_product(self, product_id):
         "deletes a product"
         products = self.db_helper.get_products_from_db()
-        product = self.db_helper.get_a_product_from_db(product_name)
+        product = self.db_helper.get_a_product_from_db(product_id)
         if products:
             if product:
-                self.db_helper.delete_a_product_from_db(product_name)
+                self.db_helper.delete_a_product_from_db(product_id)
                 return {'result': 'Product successfully deleted'}
             return {
-                'message': 'Product with name {} does not exist'.format(product_name)
+                'message': 'Product with id {} does not exist'.format(product_id)
             }
         return {'message': 'No Products added yet'}
 

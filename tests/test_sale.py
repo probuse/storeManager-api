@@ -14,6 +14,9 @@ class SaleTestCase(TestCase):
     def setUp(self):
         "initialize variables"
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
         self.sale_obj = Sale(
             product_name = "omo", 
             products_sold = 2, 
@@ -25,9 +28,8 @@ class SaleTestCase(TestCase):
         )
     
     def tearDown(self):
-        "release resources"
-        self.db_helper.delete_all_products()
-        self.db_helper.delete_all_sales_from_db()
+        "drop database"
+        self.db_helper.drop_database()
 
 
     def test_sale_object_created_successfully(self):
@@ -155,7 +157,7 @@ class SaleTestCase(TestCase):
         "Tests is product quantity changes after sale is made"
         self.product_obj.add_product(**self.product_data)
         self.sale_obj.add_sale(product_name='pk', products_sold=5, seller_id=2)
-        result = self.db_helper.get_a_product_from_db('pk')
+        result = self.db_helper.get_a_product_from_db(1)
         self.assertEqual(
             5
             ,result['product_quantity']

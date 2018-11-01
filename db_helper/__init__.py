@@ -114,31 +114,37 @@ class DBHelper:
         self.cur.execute(sql)
         return self.cur.fetchall()
 
-    def get_a_product_from_db(self, product_name):
-        "gets a product with product_name"
+    def get_a_product_from_db(self, product_id):
+        "gets a product with product_id"
+        sql = "SELECT * FROM products WHERE product_id = %s"
+        self.cur.execute(sql, [product_id])
+        return self.cur.fetchone()
+
+    def get_product_by_name(self, product_name):
+        "gets a product by name"
         sql = "SELECT * FROM products WHERE product_name = %s"
         self.cur.execute(sql, [product_name])
         return self.cur.fetchone()
 
     def modify_a_product_in_db(self, product):
-        "modifies a product with product_name"
+        "modifies a product with product_id"
         sql = """UPDATE products 
                 SET product_price=%s, product_quantity=%s
-                WHERE product_name=%s
+                WHERE product_id=%s
                 """
         self.cur.execute(
             sql,
             (
                 product.product_price,
                 product.product_quantity,
-                product.product_name,
+                product.product_id,
             )
         )
     
-    def delete_a_product_from_db(self, product_name):
-        "deletes a product with product_name"
-        sql = "DELETE FROM products WHERE product_name = %s"
-        self.cur.execute(sql, [product_name])
+    def delete_a_product_from_db(self, product_id):
+        "deletes a product with product_id"
+        sql = "DELETE FROM products WHERE product_id = %s"
+        self.cur.execute(sql, [product_id])
 
     def delete_all_products(self):
         "deletes all products"
@@ -179,7 +185,7 @@ class DBHelper:
         sql = "DELETE FROM sales"
         self.cur.execute(sql)
 
-    def drop_table(self):
+    def drop_database(self):
         "drop database tables"
         self.cur.execute("DROP TABLE users")
         self.cur.execute("DROP TABLE products")

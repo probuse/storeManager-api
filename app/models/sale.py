@@ -77,12 +77,6 @@ class Sale:
                 product_id = product_dict['product_id']
                 product = self.db_helper.get_a_product_from_db(product_id)
                 product_quantity = product['product_quantity']
-            # else:
-            #     return {
-            #         'message': 'Product with Product name {} does not exist'.format(product_name)
-            #     }
-            # if product:
-            #     product_quantity = product['product_quantity']
             else:
                 return {
                     'message': 'Product with Product name {} does not exist'.format(product_name)

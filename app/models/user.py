@@ -37,7 +37,9 @@ class User:
             password=password
         )
 
-        self.db_helper.add_user_to_db(store_attendant)
+        result = self.db_helper.add_user_to_db(store_attendant)
+        if result:
+            return {'message': result}
 
         return {
             'message': 'Store Attendant successfully added',

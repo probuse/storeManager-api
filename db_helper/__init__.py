@@ -68,16 +68,19 @@ class DBHelper:
                 (usernames, email, phone_number, is_admin, password)
                 VALUES (%s, %s, %s, %s, %s)
             """
-        self.cur.execute(
-            sql, 
-            (
-                user.usernames, 
-                user.email, 
-                user.phone_number, 
-                user.is_admin, 
-                user.password
+        try:
+            self.cur.execute(
+                sql, 
+                (
+                    user.usernames, 
+                    user.email, 
+                    user.phone_number, 
+                    user.is_admin, 
+                    user.password
+                )
             )
-        )
+        except psycopg2.IntegrityError:
+            return 'User with email address already exists'
 
     def get_store_attendants_from_db(self):
         "gets all store attendants"

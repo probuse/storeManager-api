@@ -68,7 +68,7 @@ class BaseTestCase(TestCase):
             }
         )
 
-    def add_sale(self, product_name, products_sold, seller_id):
+    def add_sale(self, product_name, products_sold, seller_id, token):
         "allows user to add a sale"
         return self.client.post(
             '/api/v1/sales',
@@ -79,16 +79,31 @@ class BaseTestCase(TestCase):
                     seller_id = seller_id
                 )
             ),
-            content_type='application/json'
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
         )
 
-    def get_sales(self):
+    def get_sales(self, token):
         "return all sales made"
-        return self.client.get('/api/v1/sales')
+        return self.client.get(
+            '/api/v1/sales',
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        )
 
-    def get_a_sale(self, sale_id):
+    def get_a_sale(self, sale_id, token):
         "returns a single sale"
-        return self.client.get('/api/v1/sales/{}'.format(sale_id))
+        return self.client.get(
+            '/api/v1/sales/{}'.format(sale_id),
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
+        )
 
     def modify_product(self, product_id, product_price, product_quantity, token):
         "allows user to modiy a product"

@@ -14,7 +14,7 @@ if os.getenv('CONFIG_CLASS') == "development":
 elif os.getenv('CONFIG_CLASS') == "testing":
     config_class = TestingConfig
 
-app.config.from_object(DevelopmentConfig)
+app.config.from_object(config_class)
 app.config['JWT_SECRET_KEY'] = '35cecd3c11bd54e46559a6e8bf20b5936a5764a1ec076b'
 jwt = JWTManager(app)
 from app.routes import ProductEndPoint, SingleProductEndPoint, SaleEndPoint, SingleSaleEndPoint 

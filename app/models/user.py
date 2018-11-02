@@ -1,11 +1,13 @@
 """
     contains implementation for StoreAttendant class
 """
+import datetime
 from db_helper import DBHelper
 from app import app
 
 from flask_jwt_extended import create_access_token
 
+expires = datetime.timedelta(days=1)
 class User:
 
     store_attendants = []
@@ -74,7 +76,7 @@ class User:
                     email=email,
                     is_admin=True
                 )
-                access_token = create_access_token(identity=admin)
+                access_token = create_access_token(identity=admin, expires_delta=expires)
                 return {'message': 'Logged in successfully as admin', 'token': access_token}, 200
             return {'message': 'email {} does not belong to admin account'.format(email)}, 401
 
@@ -84,7 +86,7 @@ class User:
                     email=email,
                     is_admin=attendant['is_admin']
                 )
-                access_token = create_access_token(identity=admin)
+                access_token = create_access_token(identity=admin, expires_delta=expires)
                 return {'message': 'Logged in successfully as store attendant', 'token': access_token}, 200
         return {'message': 'Store attendant with email {} does not exist'.format(email)}, 401
 

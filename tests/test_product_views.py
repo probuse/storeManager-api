@@ -154,22 +154,6 @@ class ProductTestCase(BaseTestCase):
             resp = json.loads(response.data.decode())
             self.assertEqual("Product with id 3 does not exist", resp['message'])
         
-    # def test_get_products_returns_no_product_if_product_name_doesnot_exist_for_store_attendant(self):
-    #     "Test product endpoint returns Product does not exists for store attendant"
-    #     with self.client:
-    #         self.register_store_attendant(
-    #             **self.store_attendant_reg_data
-    #         )
-
-    #         login_resp = self.login_store_attendant_user(
-    #             *self.store_attendant_data)
-    #         decoded_login_resp = json.loads(login_resp.data.decode())
-    #         token =  decoded_login_resp['token']
-
-    #         self.add_product("egg", 500, 1, token)
-    #         response = self.get_a_product(3, token)
-    #         resp = json.loads(response.data.decode())
-    #         self.assertEqual("Product with id 3 does not exist", resp['message'])
 
     def test_admin_can_send_a_put_request_to_products_endpoint_successfully(self):
         "Tests admin can successfully send put request"

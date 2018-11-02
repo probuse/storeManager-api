@@ -90,7 +90,7 @@ class Product:
         product = self.db_helper.get_a_product_from_db(product_id)
 
         if products:
-            if product:
+            if product  :
                 return {'result': product}
             return {
                 'message': 'Product with id {} does not exist'.format(product_id)

@@ -120,14 +120,22 @@ class DBHelper:
     def get_a_product_from_db(self, product_id):
         "gets a product with product_id"
         sql = "SELECT * FROM products WHERE product_id = %s"
-        self.cur.execute(sql, [product_id])
-        return self.cur.fetchone()
+        try:
+            self.cur.execute(sql, [product_id])
+            result = self.cur.fetchone()
+        except psycopg2.DataError:
+            result = None
+        return result
 
     def get_product_by_name(self, product_name):
         "gets a product by name"
         sql = "SELECT * FROM products WHERE product_name = %s"
-        self.cur.execute(sql, [product_name])
-        return self.cur.fetchone()
+        try:
+            self.cur.execute(sql, [product_name])
+            result = self.cur.fetchone()
+        except psycopg2.DataError:
+            result = None
+        return result
 
     def modify_a_product_in_db(self, product):
         "modifies a product with product_id"
@@ -180,8 +188,12 @@ class DBHelper:
     def get_a_sale_from_db(self, sale_id):
         "gets a sale with sale_id"
         sql = "SELECT * FROM sales WHERE sale_id = %s"
-        self.cur.execute(sql,[sale_id])
-        return self.cur.fetchone()
+        try:
+            self.cur.execute(sql,[sale_id])
+            result = self.cur.fetchone()
+        except psycopg2.DataError:
+            result = None
+        return result
 
     def delete_all_sales_from_db(self):
         "deletes all sales"

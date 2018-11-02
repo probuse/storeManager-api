@@ -11,6 +11,7 @@ class Config(object):
 class DevelopmentConfig(Config):
     "Configurations for Development environment"
     DEBUG = True
+    DATABASE_URL = 'postgresql://postgres:postgres@localhost:5432/storemanager_np'
 
 class TestingConfig(Config):
     "Configurations for Testing environment"

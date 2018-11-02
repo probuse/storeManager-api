@@ -51,8 +51,12 @@ class ProductTestCase(BaseTestCase):
     def test_add_product_returns_201_status_code_for_store_attendant(self):
         "Test adding product returns 201 status code"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -66,8 +70,12 @@ class ProductTestCase(BaseTestCase):
     def test_add_product_not_allowed_for_store_attendant(self):
         "Test adding product returns information of added product"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -95,8 +103,12 @@ class ProductTestCase(BaseTestCase):
     def test_get_products_returns_200_status_code_for_store_attendants(self):
         "Test product endpoint responds with a 200 status code"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
             
             login_resp = self.login_store_attendant_user(
@@ -120,8 +132,12 @@ class ProductTestCase(BaseTestCase):
     def test_get_products_returns_no_products_added_yet_if_no_products_are_added_for_store_attendant(self):
         "Test product endpoint returns No Products added yet when no products are added"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -195,8 +211,12 @@ class ProductTestCase(BaseTestCase):
     def test_store_attendant_can_successfully_modify_product(self):
         "Tests store attendant can modify product successfully"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_admin_user(*self.admin_data)
@@ -280,8 +300,12 @@ class ProductTestCase(BaseTestCase):
     def test_store_attendant_user_can_not_delete_product(self):
         "Tests store attendant user can not delete product"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             reg_response = self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
             decoded_reg_response = json.loads(reg_response.data.decode())
 

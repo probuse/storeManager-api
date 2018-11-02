@@ -12,6 +12,9 @@ class LoginTestCase(BaseTestCase):
         "Initialize variables"
         super(LoginTestCase, self).setUp()
         self.db_helper = DBHelper(app.config['DATABASE_URL'])
+        self.db_helper.create_users_table()
+        self.db_helper.create_products_table()
+        self.db_helper.create_sales_table()
         
         self.register_store_registration_data = dict(
             usernames="etwin himself",
@@ -44,16 +47,22 @@ class LoginTestCase(BaseTestCase):
             password="notadmin",
             is_admin=True
         )
+
+        self.admin_data = ('admin@gmail.com', 'admin', True)
     
-        self.db_helper.delete_store_attendant_user(
-            self.store_attendant_valid_login_data['email']
-        )
+    def tearDown(self):
+        "drop database"
+        self.db_helper.drop_database()
 
     def test_store_attendant_post_request_to_login_returns_200_status_code(self):
         "Test post to login endpoint returns a success"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.register_store_registration_data
+                token, **self.register_store_registration_data
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_valid_login_data)
@@ -63,8 +72,12 @@ class LoginTestCase(BaseTestCase):
     def test_store_attendant_logs_in_successfully(self):
         "Tests store attendant logins successfully"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.register_store_registration_data
+                token, **self.register_store_registration_data
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_valid_login_data)
@@ -76,8 +89,12 @@ class LoginTestCase(BaseTestCase):
     def test_store_attendant_invalid_login_credentials_returns_401(self):
         "Tests store attendant fails to login in"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.register_store_registration_data
+                token, **self.register_store_registration_data
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_invalid_login_data)
@@ -87,8 +104,12 @@ class LoginTestCase(BaseTestCase):
     def test_store_attendant_invalid_login_credentials(self):
         "Tests store attendant fails to login in"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.register_store_registration_data
+                token, **self.register_store_registration_data
             )
             response = self.login_store_attendant_user(
                 **self.store_attendant_invalid_login_data)

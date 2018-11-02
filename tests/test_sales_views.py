@@ -35,8 +35,12 @@ class SaleTestCase(BaseTestCase):
     def test_add_sale_returns_201_status_code(self):
         "Test adding sale returns 201 status code"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -55,8 +59,12 @@ class SaleTestCase(BaseTestCase):
     def test_add_sale_returns_message_to_user(self):
         "Test adding sale returns information of added sale"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -75,8 +83,12 @@ class SaleTestCase(BaseTestCase):
     def test_add_sale_if_product_name_doesnot_exist(self):
         "Test adding sale with invalid product_name"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -95,8 +107,12 @@ class SaleTestCase(BaseTestCase):
     def test_get_sales_returns_200_status_code(self):
         "Test a GET request to /sales returns a 200 status code"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -124,8 +140,12 @@ class SaleTestCase(BaseTestCase):
     def test_get_sales_when_sales_have_been_made_for_admin(self):
         "Test request to /sales returns a message to user with sales"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -145,8 +165,12 @@ class SaleTestCase(BaseTestCase):
     def test_get_sales_when_sales_have_been_made_for_store_attendant(self):
         "Test request to /sales returns a message to user with sales"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -181,8 +205,12 @@ class SaleTestCase(BaseTestCase):
     def test_get_a_sale_returns_sale(self):
         "Tests if get_a_sale returns when a sale is added"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(
@@ -204,8 +232,12 @@ class SaleTestCase(BaseTestCase):
     def test_get_a_sale_returns_sale_does_not_exist_for_admin(self):
         "Tests if get_a_sale returns when a sale is added"
         with self.client:
+            login_resp = self.login_admin_user(*self.admin_data)
+            decoded_login_resp = json.loads(login_resp.data.decode())
+            admin_token =  decoded_login_resp['token']
+
             self.register_store_attendant(
-                **self.store_attendant_reg_data
+                admin_token, **self.store_attendant_reg_data
             )
 
             login_resp = self.login_store_attendant_user(

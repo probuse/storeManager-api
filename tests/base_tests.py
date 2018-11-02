@@ -135,7 +135,7 @@ class BaseTestCase(TestCase):
                 '/api/v1/products/{}'.format(product_id)
             )
 
-    def register_store_attendant(self, **data):
+    def register_store_attendant(self, token, **data):
         "allows admin to add a store attendant"
         usernames = data.get('usernames')
         email = data.get('email')
@@ -151,7 +151,10 @@ class BaseTestCase(TestCase):
                 password=password
             )
             ),
-            content_type='application/json'
+            headers={
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            }
         )
 
     def get_store_attendants(self):
